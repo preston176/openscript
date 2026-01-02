@@ -73,14 +73,16 @@ export default function EditorPage() {
 
                 {/* Center - Video Preview */}
                 <div className="flex-1 flex flex-col border-x border-white/10">
-                    <VideoPreview
-                        isPlaying={isPlaying}
-                        currentTime={currentTime}
-                        onPlayPause={handlePlayPause}
-                    />
+                    <div className="h-[45vh]">
+                        <VideoPreview
+                            isPlaying={isPlaying}
+                            currentTime={currentTime}
+                            onPlayPause={handlePlayPause}
+                        />
+                    </div>
 
                     {/* Bottom Section - Transcript & Timeline */}
-                    <div className="flex-1 flex flex-col border-t border-white/10 bg-zinc-950">
+                    <div className="flex-1 flex flex-col border-t border-white/10 bg-zinc-950 overflow-auto">
                         <TranscriptEditor
                             segments={segments}
                             onDeleteSegment={handleDeleteSegment}
