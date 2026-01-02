@@ -42,10 +42,10 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
     };
 
     return (
-        <div className="flex-1 bg-black flex flex-col">
+        <div className="h-full bg-black flex flex-col">
             {/* Video Preview Area */}
-            <div className="flex-1 flex items-center justify-center p-8">
-                <div className="relative w-full max-w-4xl aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-white/10">
+            <div className="flex-1 min-h-0 flex items-center justify-center p-4">
+                <div className="relative w-full h-full max-w-4xl bg-zinc-900 rounded-lg overflow-hidden border border-white/10">
                     {/* Actual Video Element */}
                     <video
                         ref={videoRef}
@@ -77,9 +77,8 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/20">
                         <Button
                             variant="ghost"
-                            size="lg"
+                            className="w-20 h-20 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm p-0"
                             onClick={onPlayPause}
-                            className="w-20 h-20 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm"
                         >
                             {isPlaying ? (
                                 <Pause className="w-8 h-8 text-white" />
@@ -92,7 +91,7 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
             </div>
 
             {/* Playback Controls */}
-            <div className="h-16 border-t border-white/10 bg-zinc-900 flex items-center px-6 gap-4">
+            <div className="h-16 flex-shrink-0 border-t border-white/10 bg-zinc-900 flex items-center px-6 gap-4">
                 <Button
                     variant="ghost"
                     size="sm"
