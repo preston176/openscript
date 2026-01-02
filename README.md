@@ -1,10 +1,10 @@
-# Transcript Video Editor
+# OpenScript
 
-A local-first, open-source video editor that enables text-based video editing. Edit your videos by editing the transcript—delete a paragraph, and the corresponding video segment is automatically removed.
+An open-source, local-first video editor that enables text-based video editing. Edit your videos by editing the transcript—delete a paragraph, and the corresponding video segment is automatically removed.
 
 ## Overview
 
-Transcript Video Editor is a web-based application built with Next.js that demonstrates a novel approach to video editing. Instead of traditional timeline-based editing, users can edit videos by modifying a synchronized transcript. This approach significantly reduces the complexity of video editing for content creators, podcasters, and educators.
+OpenScript is the open-source alternative to Descript. Built with Next.js, it demonstrates a novel approach to video editing where users edit videos by modifying a synchronized transcript. This approach significantly reduces the complexity of video editing for content creators, podcasters, and educators.
 
 ## Key Features
 
@@ -40,8 +40,8 @@ Export your edited videos in multiple formats (MP4, MOV, WebM) with configurable
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/transcript-video-editor.git
-cd transcript-video-editor
+git clone https://github.com/preston176/openscript.git
+cd openscript
 
 # Install dependencies
 bun install
@@ -63,7 +63,7 @@ Navigate to `http://localhost:3000/editor` to access the video editor interface.
 ## Project Structure
 
 ```
-transcript-video-editor/
+openscript/
 ├── app/
 │   ├── editor/          # Video editor page
 │   ├── globals.css      # Global styles
