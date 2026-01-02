@@ -1,42 +1,37 @@
 # OpenScript
 
-An open-source, local-first video editor that enables text-based video editing. Edit your videos by editing the transcript—delete a paragraph, and the corresponding video segment is automatically removed.
+The open-source, local-first alternative to Descript.
 
-## Overview
+OpenScript is an upcoming video editor that enables text-based video editing. It runs entirely in your browser using local AI, ensuring your video files never leave your machine.
 
-OpenScript is the open-source alternative to Descript. Built with Next.js, it demonstrates a novel approach to video editing where users edit videos by modifying a synchronized transcript. This approach significantly reduces the complexity of video editing for content creators, podcasters, and educators.
+## Current Status
 
-## Key Features
+This repository currently hosts the Waitlist Landing Page and UI Concept Demos. 
 
-### Text-Based Editing
-Edit video content by modifying the transcript. Changes to the text automatically reflect in the video timeline, eliminating the need for complex timeline manipulation.
+The core video processing engine (FFmpeg.wasm + Whisper) is under active development.
 
-### Local-First Architecture
-All processing happens in your browser. Your video files never leave your machine, ensuring complete privacy and eliminating upload times.
+## The Vision
 
-### Real-Time Synchronization
-The transcript, timeline, and video preview remain synchronized at all times. Active segments are highlighted during playback for easy navigation.
+We are solving the "CapCut Conundrum" and the "Descript Privacy Nightmare" simultaneously.
 
-### Professional Export
-Export your edited videos in multiple formats (MP4, MOV, WebM) with configurable quality settings (1080p, 720p, 480p).
+**Edit by Text**: Delete a sentence in the transcript, and the video cut happens automatically.
 
-## Technology Stack
+**100% Local**: Powered by WebAssembly and WebGPU. No cloud uploads, no monthly fees, no privacy risks.
+
+**Open Source**: A tool for creators, built by creators.
+
+## Technology Stack (Current)
+
+This repository serves the landing page and UI mockups.
 
 - **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **Package Manager**: Bun
+- **Styling**: Tailwind CSS + Framer Motion (Animations)
+- **UI Components**: Shadcn/UI + Lucide React
+- **Deployment**: Vercel
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18.x or higher (or Bun 1.x)
-- Modern web browser with HTML5 video support
-
-### Installation
+Want to see the landing page and the UI concepts?
 
 ```bash
 # Clone the repository
@@ -50,136 +45,56 @@ npm install
 
 # Start the development server
 bun run dev
-# or
-npm run dev
 ```
 
-The application will be available at `http://localhost:3000`.
-
-### Editor Access
-
-Navigate to `http://localhost:3000/editor` to access the video editor interface.
+Open http://localhost:3000 to view the landing page.
 
 ## Project Structure
 
 ```
 openscript/
 ├── app/
-│   ├── editor/          # Video editor page
-│   ├── globals.css      # Global styles
 │   ├── layout.tsx       # Root layout
-│   └── page.tsx         # Landing page
+│   └── page.tsx         # Waitlist Landing Page
 ├── components/
-│   ├── editor/          # Editor-specific components
-│   │   ├── export-modal.tsx
-│   │   ├── media-library.tsx
-│   │   ├── properties-panel.tsx
-│   │   ├── timeline.tsx
-│   │   ├── toolbar.tsx
-│   │   ├── transcript-editor.tsx
-│   │   └── video-preview.tsx
-│   ├── ui/              # Reusable UI components
-│   ├── bento-grid.tsx
-│   ├── demo-section.tsx
-│   ├── features-section.tsx
-│   ├── footer.tsx
-│   └── hero-section.tsx
-└── lib/
-    └── utils.ts         # Utility functions
-```
-
-## Usage
-
-### Landing Page
-
-The landing page (`/`) showcases the product features and value proposition. It includes:
-
-- Hero section with email capture for waitlist
-- Feature highlights in a bento grid layout
-- Interactive demo section
-- Comprehensive features showcase
-
-### Video Editor
-
-The editor interface (`/editor`) provides:
-
-1. **Video Preview**: Central video player with playback controls
-2. **Transcript Editor**: Editable text blocks with timestamps
-3. **Timeline**: Visual representation of video segments
-4. **Media Library**: Sidebar for managing media files
-5. **Properties Panel**: Settings for volume, speed, and effects
-6. **Export Modal**: Configuration for video export
-
-### Editing Workflow
-
-1. Load a video file (currently configured for external URL)
-2. Review the synchronized transcript
-3. Edit or delete transcript paragraphs as needed
-4. Observe real-time updates in the timeline
-5. Export the edited video with your preferred settings
-
-## Configuration
-
-### Video Source
-
-The video source can be configured in `components/editor/video-preview.tsx`:
-
-```tsx
-<source src="YOUR_VIDEO_URL" type="video/mp4" />
-```
-
-For local files, place your video in the `public/` directory and reference it as:
-
-```tsx
-<source src="/your-video.mp4" type="video/mp4" />
-```
-
-## Development
-
-### Building for Production
-
-```bash
-bun run build
-# or
-npm run build
-```
-
-### Running Production Build
-
-```bash
-bun start
-# or
-npm start
+│   ├── landing/         # Landing page specific components
+│   │   ├── hero.tsx     # Hero section with Email Capture
+│   │   ├── bento.tsx    # Features grid
+│   │   └── demo.tsx     # Interactive UI Mockup (The "Fake" Editor)
+│   └── ui/              # Reusable UI components
+└── public/              # Static assets
 ```
 
 ## Roadmap
 
-This is a prototype demonstrating the core concept of text-based video editing. Future enhancements may include:
+We are building in public. Here is the plan:
 
-- Actual video processing and export functionality
-- Speech-to-text integration for automatic transcription
-- Multi-track audio support
-- Advanced editing features (transitions, effects)
-- Collaborative editing capabilities
+### Phase 1: Validation
+
+- [x] Launch High-Conversion Waitlist Page
+- [x] Community gathering (Discord/GitHub)
+
+### Phase 2: The Shell
+
+- [ ] Build the functional UI Editor (Timeline, Text Editor, Media Bin) with mock data
+
+### Phase 3: The Engine
+
+- [ ] Integrate transformers.js for in-browser Whisper transcription
+- [ ] Integrate ffmpeg.wasm for basic video trimming
+
+### Phase 4: Alpha Release
+
+- [ ] First usable build for waitlist members
 
 ## Contributing
 
-Contributions are welcome. Please follow these guidelines:
+While the core engine is being scaffolded, we welcome contributions to the Landing Page and UI Design:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes with descriptive messages
-4. Push to your branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Submit a Pull Request
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-## Acknowledgments
-
-Inspired by Descript and other modern video editing tools that prioritize user experience and workflow efficiency.
-
-## Support
-
-For questions, issues, or feature requests, please open an issue on GitHub.
+This project is licensed under the MIT License.
