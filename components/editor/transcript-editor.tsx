@@ -38,10 +38,10 @@ export function TranscriptEditor({
                     <div
                         key={segment.id}
                         className={`group relative p-4 rounded-lg border transition-all ${segment.deleted
-                                ? "bg-zinc-900/30 border-white/5 opacity-40"
-                                : isSegmentActive(segment)
-                                    ? "bg-blue-500/10 border-blue-500/30"
-                                    : "bg-zinc-900/50 border-white/10 hover:border-white/20"
+                            ? "bg-zinc-900/30 border-white/5 opacity-40"
+                            : isSegmentActive(segment)
+                                ? "bg-blue-500/10 border-blue-500/30"
+                                : "bg-zinc-900/50 border-white/10 hover:border-white/20"
                             }`}
                     >
                         {/* Timestamp */}
@@ -55,10 +55,10 @@ export function TranscriptEditor({
                         {/* Text Content */}
                         <p
                             className={`text-sm leading-relaxed transition-all ${segment.deleted
-                                    ? "text-zinc-600 line-through"
-                                    : isSegmentActive(segment)
-                                        ? "text-white"
-                                        : "text-zinc-300"
+                                ? "text-zinc-600 line-through"
+                                : isSegmentActive(segment)
+                                    ? "text-white"
+                                    : "text-zinc-300"
                                 }`}
                             contentEditable={!segment.deleted}
                             suppressContentEditableWarning
@@ -69,11 +69,10 @@ export function TranscriptEditor({
                         {/* Delete Button */}
                         <Button
                             variant="ghost"
-                            size="sm"
                             onClick={() => onDeleteSegment(segment.id)}
                             className={`absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity ${segment.deleted
-                                    ? "text-green-400 hover:text-green-300"
-                                    : "text-red-400 hover:text-red-300"
+                                ? "text-green-400 hover:text-green-300"
+                                : "text-red-400 hover:text-red-300"
                                 }`}
                         >
                             {segment.deleted ? (

@@ -17,7 +17,7 @@ export function Timeline({
     currentTime,
     onTimeUpdate,
 }: TimelineProps) {
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number | undefined>(undefined);
 
     useEffect(() => {
         if (isPlaying) {

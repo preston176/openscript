@@ -94,7 +94,6 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
             <div className="h-16 flex-shrink-0 border-t border-white/10 bg-zinc-900 flex items-center px-6 gap-4">
                 <Button
                     variant="ghost"
-                    size="sm"
                     onClick={onPlayPause}
                     className="text-white hover:bg-white/10"
                 >
