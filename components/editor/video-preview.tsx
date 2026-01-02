@@ -1,8 +1,8 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRef, useEffect, useState } from "react";
 
 interface VideoPreviewProps {
     isPlaying: boolean;
@@ -14,23 +14,26 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
     const videoRef = useRef<HTMLVideoElement>(null);
     const [videoLoaded, setVideoLoaded] = useState(false);
 
-    // Sync video playback with isPlaying state
+    // Sync video playback with isPlaying prop
     useEffect(() => {
-        if (videoRef.current) {
-            if (isPlaying) {
-                videoRef.current.play();
-            } else {
-                videoRef.current.pause();
-            }
+        if (!videoRef.current) return;
+
+        if (isPlaying) {
+            videoRef.current.play();
+        } else {
+            videoRef.current.pause();
         }
     }, [isPlaying]);
 
-    // Sync video currentTime with timeline
+    // Sync video currentTime with prop
     useEffect(() => {
-        if (videoRef.current && !isPlaying) {
+        if (!videoRef.current) return;
+        const diff = Math.abs(videoRef.current.currentTime - currentTime);
+        // Only update if difference is significant to avoid constant updates
+        if (diff > 0.5) {
             videoRef.current.currentTime = currentTime;
         }
-    }, [currentTime, isPlaying]);
+    }, [currentTime]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -46,19 +49,24 @@ export function VideoPreview({ isPlaying, currentTime, onPlayPause }: VideoPrevi
                     {/* Actual Video Element */}
                     <video
                         ref={videoRef}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain bg-black"
                         loop
                         muted
                         playsInline
                         crossOrigin="anonymous"
                         onLoadedData={() => setVideoLoaded(true)}
+                        onCanPlay={() => setVideoLoaded(true)}
+                        onError={(e) => {
+                            console.error('Video load error:', e);
+                            setVideoLoaded(true); // Show video element even on error
+                        }}
                     >
                         <source src="https://ajbk6cdk7t.ufs.sh/f/bj0QrlC8Kw5DKQDqbnSbA4tIxXChouHgsJ1mqQVTp9YGN3c2" type="video/mp4" />
                     </video>
 
                     {/* Fallback if video fails to load */}
                     {!videoLoaded && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
+                        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
                             <div className="text-center text-zinc-400 text-sm">
                                 Loading video...
                             </div>
