@@ -1,36 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Transcript Video Editor
+
+A local-first, open-source video editor that enables text-based video editing. Edit your videos by editing the transcript—delete a paragraph, and the corresponding video segment is automatically removed.
+
+## Overview
+
+Transcript Video Editor is a web-based application built with Next.js that demonstrates a novel approach to video editing. Instead of traditional timeline-based editing, users can edit videos by modifying a synchronized transcript. This approach significantly reduces the complexity of video editing for content creators, podcasters, and educators.
+
+## Key Features
+
+### Text-Based Editing
+Edit video content by modifying the transcript. Changes to the text automatically reflect in the video timeline, eliminating the need for complex timeline manipulation.
+
+### Local-First Architecture
+All processing happens in your browser. Your video files never leave your machine, ensuring complete privacy and eliminating upload times.
+
+### Real-Time Synchronization
+The transcript, timeline, and video preview remain synchronized at all times. Active segments are highlighted during playback for easy navigation.
+
+### Professional Export
+Export your edited videos in multiple formats (MP4, MOV, WebM) with configurable quality settings (1080p, 720p, 480p).
+
+## Technology Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Package Manager**: Bun
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.x or higher (or Bun 1.x)
+- Modern web browser with HTML5 video support
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/transcript-video-editor.git
+cd transcript-video-editor
+
+# Install dependencies
+bun install
+# or
+npm install
+
+# Start the development server
+bun run dev
+# or
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Editor Access
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Navigate to `http://localhost:3000/editor` to access the video editor interface.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+transcript-video-editor/
+├── app/
+│   ├── editor/          # Video editor page
+│   ├── globals.css      # Global styles
+│   ├── layout.tsx       # Root layout
+│   └── page.tsx         # Landing page
+├── components/
+│   ├── editor/          # Editor-specific components
+│   │   ├── export-modal.tsx
+│   │   ├── media-library.tsx
+│   │   ├── properties-panel.tsx
+│   │   ├── timeline.tsx
+│   │   ├── toolbar.tsx
+│   │   ├── transcript-editor.tsx
+│   │   └── video-preview.tsx
+│   ├── ui/              # Reusable UI components
+│   ├── bento-grid.tsx
+│   ├── demo-section.tsx
+│   ├── features-section.tsx
+│   ├── footer.tsx
+│   └── hero-section.tsx
+└── lib/
+    └── utils.ts         # Utility functions
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Landing Page
 
-## Deploy on Vercel
+The landing page (`/`) showcases the product features and value proposition. It includes:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Hero section with email capture for waitlist
+- Feature highlights in a bento grid layout
+- Interactive demo section
+- Comprehensive features showcase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Video Editor
+
+The editor interface (`/editor`) provides:
+
+1. **Video Preview**: Central video player with playback controls
+2. **Transcript Editor**: Editable text blocks with timestamps
+3. **Timeline**: Visual representation of video segments
+4. **Media Library**: Sidebar for managing media files
+5. **Properties Panel**: Settings for volume, speed, and effects
+6. **Export Modal**: Configuration for video export
+
+### Editing Workflow
+
+1. Load a video file (currently configured for external URL)
+2. Review the synchronized transcript
+3. Edit or delete transcript paragraphs as needed
+4. Observe real-time updates in the timeline
+5. Export the edited video with your preferred settings
+
+## Configuration
+
+### Video Source
+
+The video source can be configured in `components/editor/video-preview.tsx`:
+
+```tsx
+<source src="YOUR_VIDEO_URL" type="video/mp4" />
+```
+
+For local files, place your video in the `public/` directory and reference it as:
+
+```tsx
+<source src="/your-video.mp4" type="video/mp4" />
+```
+
+## Development
+
+### Building for Production
+
+```bash
+bun run build
+# or
+npm run build
+```
+
+### Running Production Build
+
+```bash
+bun start
+# or
+npm start
+```
+
+## Roadmap
+
+This is a prototype demonstrating the core concept of text-based video editing. Future enhancements may include:
+
+- Actual video processing and export functionality
+- Speech-to-text integration for automatic transcription
+- Multi-track audio support
+- Advanced editing features (transitions, effects)
+- Collaborative editing capabilities
+
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes with descriptive messages
+4. Push to your branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Acknowledgments
+
+Inspired by Descript and other modern video editing tools that prioritize user experience and workflow efficiency.
+
+## Support
+
+For questions, issues, or feature requests, please open an issue on GitHub.
