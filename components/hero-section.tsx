@@ -1,25 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 
 export function HeroSection() {
-    const [email, setEmail] = useState("");
     const [timelineHeights, setTimelineHeights] = useState<number[]>([]);
 
     // Generate random heights on client-side only to avoid hydration mismatch
     useEffect(() => {
         setTimelineHeights(Array.from({ length: 12 }, () => Math.random() * 60 + 40));
     }, []);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Email submitted:", email);
-        alert("Thanks for joining the waitlist! We'll be in touch soon.");
-        setEmail("");
-    };
 
     return (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -128,27 +118,22 @@ export function HeroSection() {
                     No cloud uploads. No monthly fees.
                 </motion.p>
 
-                {/* Email capture form */}
-                <motion.form
+                {/* Waitlist CTA */}
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    onSubmit={handleSubmit}
                     className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
                 >
-                    <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="flex-1"
-                        aria-label="Email address for waitlist"
-                    />
-                    <Button type="submit" variant="primary">
+                    <button
+                        data-tally-open="YOUR_FORM_ID"
+                        data-tally-emoji-text="👋"
+                        data-tally-emoji-animation="wave"
+                        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:scale-105 shadow-lg shadow-blue-500/50"
+                    >
                         Join Waitlist
-                    </Button>
-                </motion.form>
+                    </button>
+                </motion.div>
 
                 <motion.p
                     initial={{ opacity: 0 }}

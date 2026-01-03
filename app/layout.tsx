@@ -25,9 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.className} antialiased bg-black text-white`}
       >
         {children}
+
+        {/* Tally Widget Script */}
+        <script
+          async
+          src="https://tally.so/widgets/embed.js"
+        ></script>
       </body>
     </html>
   );
