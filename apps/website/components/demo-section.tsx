@@ -89,14 +89,17 @@ export function DemoSection() {
                             </div>
 
                             <div className="space-y-4">
-                                {/* Video preview placeholder */}
-                                <div className="aspect-video bg-zinc-900 rounded-lg border border-white/5 flex items-center justify-center">
-                                    <div className="text-center">
-                                        <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-zinc-800 flex items-center justify-center">
-                                            <Play className="w-5 h-5 text-zinc-400 ml-0.5" />
-                                        </div>
-                                        <p className="text-xs text-zinc-500">Video Preview</p>
-                                    </div>
+                                {/* Video preview */}
+                                <div className="aspect-video bg-zinc-900 rounded-lg border border-white/5 overflow-hidden">
+                                    <video
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover"
+                                    >
+                                        <source src="https://ajbk6cdk7t.ufs.sh/f/bj0QrlC8Kw5DqPhAHgNmbzOFUMQE3LXcwePZ5idsaRAqkxK6" type="video/mp4" />
+                                    </video>
                                 </div>
 
                                 {/* Timeline segments */}
