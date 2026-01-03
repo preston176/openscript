@@ -126,7 +126,7 @@ export function HeroSection() {
                     className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
                 >
                     <button
-                        data-tally-open="YOUR_FORM_ID"
+                        data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID || "YOUR_FORM_ID"}
                         data-tally-emoji-text="👋"
                         data-tally-emoji-animation="wave"
                         className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:scale-105 shadow-lg shadow-blue-500/50"

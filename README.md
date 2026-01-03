@@ -1,100 +1,63 @@
 # OpenScript
 
-The open-source, local-first alternative to Descript.
+**The open-source, local-first alternative to Descript.**
 
-OpenScript is an upcoming video editor that enables text-based video editing. It runs entirely in your browser using local AI, ensuring your video files never leave your machine.
-
-## Current Status
-
-This repository currently hosts the Waitlist Landing Page and UI Concept Demos. 
-
-The core video processing engine (FFmpeg.wasm + Whisper) is under active development.
-
-## The Vision
-
-We are solving the "CapCut Conundrum" and the "Descript Privacy Nightmare" simultaneously.
-
-**Edit by Text**: Delete a sentence in the transcript, and the video cut happens automatically.
-
-**100% Local**: Powered by WebAssembly and WebGPU. No cloud uploads, no monthly fees, no privacy risks.
-
-**Open Source**: A tool for creators, built by creators.
-
-## Technology Stack (Current)
-
-This repository serves the landing page and UI mockups.
-
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS + Framer Motion (Animations)
-- **UI Components**: Shadcn/UI + Lucide React
-- **Deployment**: Vercel
-
-## Getting Started
-
-Want to see the landing page and the UI concepts?
-
-```bash
-# Clone the repository
-git clone https://github.com/preston176/openscript.git
-cd openscript
-
-# Install dependencies
-bun install
-# or
-npm install
-
-# Start the development server
-bun run dev
-```
-
-Open http://localhost:3000 to view the landing page.
+Edit video by editing text. 100% local, 100% free, 100% yours.
 
 ## Project Structure
 
+This is a monorepo containing:
+
+- **[apps/website](./apps/website)** - Marketing website and waitlist (Next.js)
+- **apps/desktop** - Desktop app (coming soon)
+- **packages/** - Shared packages (coming soon)
+
+## Quick Start
+
+```bash
+# Install dependencies
+bun install
+
+# Start development server
+bun dev
+
+# Build for production
+bun build
 ```
-openscript/
-├── app/
-│   ├── layout.tsx       # Root layout
-│   └── page.tsx         # Waitlist Landing Page
-├── components/
-│   ├── landing/         # Landing page specific components
-│   │   ├── hero.tsx     # Hero section with Email Capture
-│   │   ├── bento.tsx    # Features grid
-│   │   └── demo.tsx     # Interactive UI Mockup (The "Fake" Editor)
-│   └── ui/              # Reusable UI components
-└── public/              # Static assets
-```
+
+The website will be available at http://localhost:3000
+
+## Development
+
+### Website
+See [apps/website/README.md](./apps/website/README.md) for website-specific documentation.
+
+### Desktop App
+Coming soon! The desktop app will use Electron/Tauri with FFmpeg.wasm and Whisper for local video processing.
 
 ## Roadmap
 
-We are building in public. Here is the plan:
-
-### Phase 1: Validation
-
-- [x] Launch High-Conversion Waitlist Page
-- [x] Community gathering (Discord/GitHub)
-
-### Phase 2: The Shell
-
-- [ ] Build the functional UI Editor (Timeline, Text Editor, Media Bin) with mock data
-
-### Phase 3: The Engine
-
-- [ ] Integrate transformers.js for in-browser Whisper transcription
-- [ ] Integrate ffmpeg.wasm for basic video trimming
-
-### Phase 4: Alpha Release
-
-- [ ] First usable build for waitlist members
+- ✅ Marketing website with waitlist
+- ✅ Interactive UI demo
+- 🚧 Desktop app (Electron/Tauri)
+- 🚧 Video processing engine (FFmpeg.wasm + Whisper)
+- 🚧 Text-based video editing
+- 🚧 Export functionality
 
 ## Contributing
 
-While the core engine is being scaffolded, we welcome contributions to the Landing Page and UI Design:
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a Pull Request
+Contributions are welcome! Please read our contributing guidelines (coming soon).
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License - see [LICENSE](./LICENSE) for details.
+
+## Links
+
+- **GitHub**: https://github.com/preston176/openscript
+- **Website**: Coming soon
+- **Discord**: Coming soon
+
+---
+
+Built with ❤️ by the OpenScript community
