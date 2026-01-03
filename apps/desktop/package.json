@@ -4,8 +4,12 @@
   "description": "OpenScript Desktop - Local-first video editor",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "electron-forge start",
-    "build": "tsc && electron-builder",
+    "dev:renderer": "vite",
+    "dev:main": "tsc -p tsconfig.json && NODE_ENV=development electron dist/main/index.js",
+    "dev": "concurrently \"bun run dev:renderer\" \"bun run dev:main\"",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.json",
+    "build": "bun run build:renderer && bun run build:main",
     "start": "electron .",
     "package": "electron-builder"
   },
@@ -32,5 +36,17 @@
       "target": ["AppImage"],
       "category": "Video"
     }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.3.0"
+  },
+  "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.28",
+    "fluent-ffmpeg": "^2.1.3"
   }
 }
