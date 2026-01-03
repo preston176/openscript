@@ -70,13 +70,11 @@ export function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="flex justify-center"
+                    className="flex justify-center "
                 >
                     <button
-                        data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID || "YOUR_FORM_ID"}
-                        data-tally-emoji-text="👋"
-                        data-tally-emoji-animation="wave"
-                        className="group relative px-10 py-5 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-500/40 hover:shadow-blue-400/60 border border-blue-400/20"
+                        onClick={() => window.open(`https://tally.so/r/${process.env.NEXT_PUBLIC_TALLY_FORM_ID || 'YOUR_FORM_ID'}`, '_blank')}
+                        className="group relative px-10 py-5 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-500/40 hover:shadow-blue-400/60 border border-blue-400/20 cursor-pointer"
                     >
                         <span className="relative z-10 flex items-center gap-2">
                             <span>Join Waitlist</span>
