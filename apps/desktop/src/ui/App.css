@@ -35,12 +35,14 @@ body {
 
 /* Header */
 .header {
-  height: 56px;
+  min-height: 56px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 12px 24px;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .header h1 {
@@ -51,6 +53,7 @@ body {
 .badge {
   font-size: 12px;
   color: var(--text-tertiary);
+  white-space: nowrap;
 }
 
 /* Main */
@@ -59,13 +62,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 32px 16px;
+  overflow-y: auto;
 }
 
 /* Welcome Screen */
 .welcome {
   text-align: center;
   max-width: 600px;
+  width: 100%;
+  padding: 0 16px;
 }
 
 .icon-circle {
@@ -86,13 +92,14 @@ body {
 }
 
 .welcome h2 {
-  font-size: 32px;
+  font-size: clamp(24px, 5vw, 32px);
   font-weight: 700;
   margin-bottom: 16px;
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 18px;
+  font-size: clamp(16px, 3vw, 18px);
   color: var(--text-secondary);
   margin-bottom: 8px;
 }
@@ -115,6 +122,8 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+  width: 100%;
+  max-width: 300px;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -136,6 +145,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: background 0.2s;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover {
@@ -146,6 +156,7 @@ body {
 .video-container {
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
 }
 
 .video-info {
@@ -153,6 +164,8 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .label {
@@ -168,7 +181,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 800px;
+  max-width: 100%;
 }
 
 .video-preview {
@@ -178,6 +191,7 @@ body {
   border: 1px solid var(--border);
   overflow: hidden;
   margin-bottom: 24px;
+  width: 100%;
 }
 
 .video-preview video {
@@ -189,10 +203,13 @@ body {
   display: flex;
   gap: 16px;
   margin-bottom: 32px;
+  flex-wrap: wrap;
 }
 
 .actions .btn-primary {
   flex: 1;
+  min-width: 200px;
+  max-width: 100%;
 }
 
 .success-badge {
@@ -203,12 +220,14 @@ body {
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
+  white-space: nowrap;
 }
 
 .check-icon {
   width: 20px;
   height: 20px;
   color: var(--success);
+  flex-shrink: 0;
 }
 
 .success-badge span {
@@ -226,8 +245,142 @@ body {
 .info-box p {
   font-size: 14px;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .info-box strong {
   color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .main {
+    padding: 24px 12px;
+  }
+
+  .welcome {
+    padding: 0 8px;
+  }
+
+  .icon-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-primary {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .video-container {
+    padding: 0 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn-primary {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .success-badge {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .badge {
+    font-size: 10px;
+  }
+
+  .welcome h2 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .features {
+    font-size: 11px;
+  }
+
+  .btn-primary {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .path {
+    font-size: 12px;
+  }
+
+  .video-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-secondary {
+    align-self: flex-end;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .header {
+    padding: 8px 12px;
+  }
+
+  .main {
+    padding: 16px 8px;
+  }
+
+  .welcome h2 {
+    font-size: 20px;
+  }
+
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+  }
+
+  .icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Short viewport heights */
+@media (max-height: 500px) {
+  .main {
+    padding: 16px;
+    align-items: flex-start;
+  }
+
+  .icon-circle {
+    margin-bottom: 16px;
+  }
+
+  .welcome h2 {
+    margin-bottom: 12px;
+  }
+
+  .features {
+    margin-bottom: 20px;
+  }
 }
