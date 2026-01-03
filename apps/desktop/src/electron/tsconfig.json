@@ -8,6 +8,7 @@
     "module": "nodenext",
     //define where to put generated JS
     "outDir": "../../dist-electron",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   }
 }
