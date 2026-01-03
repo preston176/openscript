@@ -1,17 +1,28 @@
+"use client";
+
 import { Github, Twitter } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function Footer() {
+    const [dayGreeting, setDayGreeting] = useState("");
+
+    useEffect(() => {
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const today = new Date().getDay();
+        setDayGreeting(`Have a nice ${days[today]}!`);
+    }, []);
+
     return (
         <footer className="relative py-12 px-6 border-t border-white/10">
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="text-sm text-slate-400">
-                        Made with ❤️ for the open-source community
+                        {dayGreeting || "Have a nice day!"}
                     </div>
 
                     <div className="flex items-center gap-6">
                         <a
-                            href="https://github.com"
+                            href="https://github.com/preston176/openscript"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="View source code on GitHub"
@@ -20,7 +31,7 @@ export function Footer() {
                             <Github className="w-5 h-5" />
                         </a>
                         <a
-                            href="https://twitter.com"
+                            href="https://x.com/@Preston_Mayieka"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Follow us on Twitter"
