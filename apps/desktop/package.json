@@ -5,7 +5,7 @@
   "main": "dist/main/index.js",
   "scripts": {
     "dev:renderer": "vite",
-    "dev:main": "tsc -p tsconfig.json && NODE_ENV=development electron dist/main/index.js",
+    "dev:main": "tsc -p tsconfig.json && NODE_ENV=development bunx --bun electron dist/main/index.js",
     "dev": "concurrently \"bun run dev:renderer\" \"bun run dev:main\"",
     "build:renderer": "vite build",
     "build:main": "tsc -p tsconfig.json",
