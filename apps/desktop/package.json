@@ -1,0 +1,36 @@
+{
+  "name": "@openscript/desktop",
+  "version": "0.1.0",
+  "description": "OpenScript Desktop - Local-first video editor",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "electron-forge start",
+    "build": "tsc && electron-builder",
+    "start": "electron .",
+    "package": "electron-builder"
+  },
+  "author": "OpenScript Team",
+  "license": "MIT",
+  "build": {
+    "appId": "com.openscript.desktop",
+    "productName": "OpenScript",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.video",
+      "target": ["dmg"]
+    },
+    "win": {
+      "target": ["nsis"]
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Video"
+    }
+  }
+}
