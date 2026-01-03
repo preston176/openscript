@@ -43,7 +43,26 @@ ipcMain.handle("select-video-file", async () => {
 
 // IPC Handler: Extract audio from video
 ipcMain.handle("extract-audio", async (event, videoPath: string) => {
-  // TODO: Implement FFmpeg audio extraction
-  // For now, return a placeholder
-  return `/tmp/audio-${Date.now()}.wav`;
+  try {
+    const { extractAudio } = await import("./ffmpeg.js");
+    
+    const audioPath = await extractAudio(videoPath, (progress) => {
+      // Send progress updates to renderer
+      if (mainWindow) {
+        mainWindow.webContents.send("extraction-progress", progress);
+      }
+    });
+    
+    return audioPath;
+  } catch (error) {
+    console.error("Audio extraction error:", error);
+    throw error;
+  }
 });
+
+// Cleanup temp files on app quit
+app.on("before-quit", async () => {
+  const { cleanupTempFiles } = await import("./ffmpeg.js");
+  cleanupTempFiles();
+});
+

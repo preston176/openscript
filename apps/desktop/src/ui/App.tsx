@@ -7,6 +7,7 @@ declare global {
     electron: {
       selectVideoFile: () => Promise<string | null>;
       extractAudio: (videoPath: string) => Promise<string>;
+      onExtractionProgress: (callback: (progress: any) => void) => void;
     };
   }
 }
@@ -15,6 +16,7 @@ function App() {
   const [videoPath, setVideoPath] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [audioPath, setAudioPath] = useState<string | null>(null);
+  const [extractionProgress, setExtractionProgress] = useState(0);
 
   const handleSelectVideo = async () => {
     try {
@@ -32,14 +34,23 @@ function App() {
     if (!videoPath) return;
 
     setIsExtracting(true);
+    setExtractionProgress(0);
+
+    // Listen for progress updates
+    window.electron.onExtractionProgress((progress) => {
+      setExtractionProgress(Math.round(progress.percent || 0));
+    });
+
     try {
       const audio = await window.electron.extractAudio(videoPath);
       setAudioPath(audio);
       console.log("Audio extracted to:", audio);
     } catch (error) {
       console.error("Error extracting audio:", error);
+      alert(`Failed to extract audio: ${error}`);
     } finally {
       setIsExtracting(false);
+      setExtractionProgress(0);
     }
   };
 
@@ -107,7 +118,7 @@ function App() {
                 className="btn-primary"
               >
                 {isExtracting
-                  ? "Extracting Audio..."
+                  ? `Extracting Audio... ${extractionProgress}%`
                   : "Extract Audio for Transcription"}
               </button>
               {audioPath && (

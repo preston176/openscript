@@ -6,4 +6,9 @@ contextBridge.exposeInMainWorld("electron", {
   selectVideoFile: () => ipcRenderer.invoke("select-video-file"),
   extractAudio: (videoPath: string) =>
     ipcRenderer.invoke("extract-audio", videoPath),
+  onExtractionProgress: (callback: (progress: any) => void) => {
+    ipcRenderer.on("extraction-progress", (_event, progress) =>
+      callback(progress)
+    );
+  },
 });
