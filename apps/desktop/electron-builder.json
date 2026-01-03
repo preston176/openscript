@@ -1,0 +1,15 @@
+{
+  "appId": "com.preston176.electronapp",
+  "files": ["dist-electron", "dist-react"],
+  "icon": "./desktopIcon.png",
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": ["portable", "msi"]
+  }
+}

@@ -1,55 +1,40 @@
 {
-  "name": "@openscript/desktop",
-  "version": "0.1.0",
-  "description": "OpenScript Desktop - Local-first video editor",
-  "main": "dist/main/index.js",
+  "name": "electron-js-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
-    "dev:renderer": "vite",
-    "dev:main": "bunx tsc -p tsconfig.json && NODE_ENV=development bunx --bun electron dist/main/index.js",
-    "dev": "concurrently \"bun run dev:renderer\" \"bun run dev:main\"",
-    "build:renderer": "vite build",
-    "build:main": "tsc -p tsconfig.json",
-    "build": "bun run build:renderer && bun run build:main",
-    "start": "electron .",
-    "package": "electron-builder"
-  },
-  "author": "OpenScript Team",
-  "license": "MIT",
-  "build": {
-    "appId": "com.openscript.desktop",
-    "productName": "OpenScript",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "package.json"
-    ],
-    "mac": {
-      "category": "public.app-category.video",
-      "target": ["dmg"]
-    },
-    "win": {
-      "target": ["nsis"]
-    },
-    "linux": {
-      "target": ["AppImage"],
-      "category": "Video"
-    }
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.1.18",
-    "@vitejs/plugin-react": "^5.1.2",
-    "autoprefixer": "^10.4.23",
-    "concurrently": "^9.2.1",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18",
-    "vite": "^7.3.0"
+    "dev": "npm-run-all --parallel dev:react dev:electron",
+    "dev:react": "vite",
+"dev:electron": "npm run transpile:electron && cross-env NODE_ENV=development electron .",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "transpile:electron": "tsc --project src/electron/tsconfig.json",
+    "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
+    "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
+    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
   },
   "dependencies": {
-    "@types/fluent-ffmpeg": "^2.1.28",
-    "fluent-ffmpeg": "^2.1.3",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "cross-env": "^10.0.0",
+    "electron": "^37.2.4",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.30.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.1",
+    "vite": "^7.0.4"
   }
 }
