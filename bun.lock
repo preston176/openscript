@@ -4,6 +4,7 @@
     "": {
       "name": "descript-open-source",
       "devDependencies": {
+        "@types/electron": "^1.6.12",
         "@types/node": "^25.0.3",
         "bun-types": "latest",
       },
