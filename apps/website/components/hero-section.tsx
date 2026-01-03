@@ -27,7 +27,7 @@ export function HeroSection() {
                 transition={{ duration: 1, delay: 0.3 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-                <div className="w-[90%] max-w-6xl h-[600px] rounded-2xl border border-white/5 bg-zinc-900/30 backdrop-blur-3xl overflow-hidden opacity-15 blur-md">
+                <div className="w-[90%] max-w-6xl h-[600px] rounded-2xl border border-white/5 bg-zinc-900/30 backdrop-blur-3xl overflow-hidden opacity-30 blur-sm">
                     <video
                         autoPlay
                         loop
@@ -70,7 +70,7 @@ export function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                    className="flex justify-center"
                 >
                     <button
                         data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID || "YOUR_FORM_ID"}
