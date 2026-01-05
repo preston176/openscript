@@ -252,6 +252,78 @@ body {
   color: var(--text-primary);
 }
 
+/* Transcription Section */
+.transcription-section {
+  margin-top: 24px;
+}
+
+.transcript-container {
+  margin-top: 24px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.transcript-container h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.transcript-container h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+  color: var(--text-secondary);
+}
+
+.transcript-text {
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.transcript-segments {
+  margin-top: 16px;
+}
+
+.segment {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.segment:hover {
+  background: #27272a;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: var(--accent);
+  font-family: "Monaco", "Courier New", monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.segment .text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .header {

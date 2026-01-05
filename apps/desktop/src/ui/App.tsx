@@ -18,6 +18,12 @@ function App() {
   const [audioPath, setAudioPath] = useState<string | null>(null);
   const [extractionProgress, setExtractionProgress] = useState(0);
 
+  // Transcription state
+  const [transcript, setTranscript] = useState<any>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcriptionStatus, setTranscriptionStatus] = useState<string>('');
+  const [transcriptionProgress, setTranscriptionProgress] = useState(0);
+
   const handleSelectVideo = async () => {
     try {
       const path = await window.electron.selectVideoFile();
@@ -54,12 +60,83 @@ function App() {
     }
   };
 
+  const handleTranscribe = async () => {
+    if (!audioPath) return;
+
+    setIsTranscribing(true);
+    setTranscriptionStatus('Initializing...');
+    setTranscriptionProgress(0);
+
+    try {
+      // Create web worker
+      const worker = new Worker(
+        new URL('./workers/whisper.worker.ts', import.meta.url),
+        { type: 'module' }
+      );
+
+      // Handle messages from worker
+      worker.onmessage = (e) => {
+        const { type, message, transcript: result, error } = e.data;
+
+        switch (type) {
+          case 'loading':
+            setTranscriptionStatus(message);
+            setTranscriptionProgress(10);
+            break;
+          case 'loaded':
+            setTranscriptionStatus(message);
+            setTranscriptionProgress(30);
+            break;
+          case 'transcribing':
+            setTranscriptionStatus(message);
+            setTranscriptionProgress(50);
+            break;
+          case 'complete':
+            setTranscript(result);
+            setTranscriptionStatus('Transcription complete!');
+            setTranscriptionProgress(100);
+            setIsTranscribing(false);
+            worker.terminate();
+            break;
+          case 'error':
+            console.error('Transcription error:', error);
+            alert(`Transcription failed: ${error}`);
+            setIsTranscribing(false);
+            setTranscriptionStatus('');
+            setTranscriptionProgress(0);
+            worker.terminate();
+            break;
+        }
+      };
+
+      // Handle worker errors
+      worker.onerror = (error) => {
+        console.error('Worker error:', error);
+        alert(`Worker error: ${error.message}`);
+        setIsTranscribing(false);
+        setTranscriptionStatus('');
+        setTranscriptionProgress(0);
+        worker.terminate();
+      };
+
+      // Send audio path to worker
+      worker.postMessage({ audioPath });
+
+    } catch (error) {
+      console.error('Error starting transcription:', error);
+      alert(`Failed to start transcription: ${error}`);
+      setIsTranscribing(false);
+      setTranscriptionStatus('');
+      setTranscriptionProgress(0);
+    }
+  };
+
   return (
     <div className="app">
       {/* Header */}
       <header className="header">
         <h1>OpenScript</h1>
-        <span className="badge">Phase 1: Foundation</span>
+        <span className="badge">Phase 2: Transcription</span>
       </header>
 
       {/* Main Content */}
@@ -141,13 +218,45 @@ function App() {
               )}
             </div>
 
-            {/* Next Steps */}
-            <div className="info-box">
-              <p>
-                <strong>Next:</strong> Phase 2 will add Whisper transcription
-                to convert this audio into editable text.
-              </p>
-            </div>
+            {/* Transcription Section */}
+            {audioPath && (
+              <div className="transcription-section">
+                <button
+                  onClick={handleTranscribe}
+                  disabled={isTranscribing || !!transcript}
+                  className="btn-primary"
+                >
+                  {isTranscribing
+                    ? `${transcriptionStatus} ${transcriptionProgress}%`
+                    : transcript
+                      ? "Transcription Complete ✓"
+                      : "Start Transcription"}
+                </button>
+
+                {/* Transcript Display */}
+                {transcript && (
+                  <div className="transcript-container">
+                    <h3>Transcript</h3>
+                    <div className="transcript-text">
+                      {transcript.text || JSON.stringify(transcript, null, 2)}
+                    </div>
+                    {transcript.chunks && transcript.chunks.length > 0 && (
+                      <div className="transcript-segments">
+                        <h4>Segments with Timestamps</h4>
+                        {transcript.chunks.map((chunk: any, index: number) => (
+                          <div key={index} className="segment">
+                            <span className="timestamp">
+                              [{chunk.timestamp[0].toFixed(2)}s - {chunk.timestamp[1].toFixed(2)}s]
+                            </span>
+                            <span className="text">{chunk.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </main>
