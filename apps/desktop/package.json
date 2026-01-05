@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "bunx concurrently \"bunx vite\" \"bun run dev:electron\"",
     "dev:react": "bunx vite",
-    "dev:electron": "bun run transpile:electron && cross-env NODE_ENV=development npx --yes electron .",
+    "dev:electron": "bun run transpile:electron && cross-env NODE_ENV=development electron .",
     "build": "bunx tsc -b && bunx vite build",
     "lint": "bunx eslint .",
     "preview": "bunx vite preview",
@@ -26,12 +26,12 @@
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@types/electron": "^1.6.12",
+    "@types/node": "^25.0.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
     "concurrently": "^9.2.1",
     "cross-env": "^10.0.0",
-    "electron": "^37.2.4",
     "electron-builder": "^26.0.12",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -41,5 +41,9 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
-  }
+  },
+  "description": "A modern cross-platform desktop application boilerplate using **Electron**, **React 19**, **TypeScript**, and **Vite**. This project provides a fast, maintainable, and scalable environment for building desktop apps with a web technology stack.",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
