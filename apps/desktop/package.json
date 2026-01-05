@@ -1,0 +1,49 @@
+{
+  "name": "electron-js-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "bunx concurrently \"bunx vite\" \"bun run dev:electron\"",
+    "dev:react": "bunx vite",
+    "dev:electron": "bun run transpile:electron && cross-env NODE_ENV=development electron .",
+    "build": "bunx tsc -b && bunx vite build",
+    "lint": "bunx eslint .",
+    "preview": "bunx vite preview",
+    "transpile:electron": "bunx tsc --project src/electron/tsconfig.json",
+    "transpile:preload": "bunx tsc src/electron/preload.ts --outDir dist-electron --module nodenext --target esnext --skipLibCheck",
+    "dist:mac": "bun run transpile:electron && bun run build && bunx electron-builder --mac --arm64",
+    "dist:win": "bun run transpile:electron && bun run build && bunx electron-builder --win --x64",
+    "dist:linux": "bun run transpile:electron && bun run build && bunx electron-builder --linux --x64"
+  },
+  "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.28",
+    "fluent-ffmpeg": "^2.1.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@types/electron": "^1.6.12",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.30.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.1",
+    "vite": "^7.0.4"
+  },
+  "description": "A modern cross-platform desktop application boilerplate using **Electron**, **React 19**, **TypeScript**, and **Vite**. This project provides a fast, maintainable, and scalable environment for building desktop apps with a web technology stack.",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
