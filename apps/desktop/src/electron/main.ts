@@ -120,9 +120,59 @@ ipcMain.handle("transcribe-audio", async (event, audioPath: string) => {
   }
 });
 
+// IPC Handler: Export edited video
+ipcMain.handle("export-video", async (event, options: {
+  videoPath: string;
+  segments: Array<{ startTime: number; endTime: number; deleted: boolean }>;
+  outputPath?: string;
+  format?: 'mp4' | 'mov' | 'webm';
+  quality?: 'low' | 'medium' | 'high';
+}) => {
+  try {
+    const { exportEditedVideo, getDefaultOutputPath } = await import("./export.js");
+    
+    // Get output path from dialog if not provided
+    let outputPath = options.outputPath;
+    if (!outputPath) {
+      const defaultPath = getDefaultOutputPath(options.videoPath, options.format || 'mp4');
+      const result = await dialog.showSaveDialog(mainWindow!, {
+        title: 'Export Edited Video',
+        defaultPath,
+        filters: [
+          { name: 'MP4 Video', extensions: ['mp4'] },
+          { name: 'MOV Video', extensions: ['mov'] },
+          { name: 'WebM Video', extensions: ['webm'] },
+        ],
+      });
+      
+      if (result.canceled || !result.filePath) {
+        return { canceled: true };
+      }
+      outputPath = result.filePath;
+    }
+    
+    // Export the video
+    const exportedPath = await exportEditedVideo(
+      options.videoPath,
+      options.segments,
+      outputPath,
+      {
+        format: options.format || 'mp4',
+        quality: options.quality || 'high',
+      },
+      undefined,
+      mainWindow || undefined
+    );
+    
+    return { success: true, outputPath: exportedPath };
+  } catch (error) {
+    console.error("Error exporting video:", error);
+    throw error;
+  }
+});
+
 // Cleanup temp files on app quit
 app.on("before-quit", async () => {
   const { cleanupTempFiles } = await import("./ffmpeg.js");
   cleanupTempFiles();
 });
-

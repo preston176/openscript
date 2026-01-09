@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld("electron", {
   getCacheDir: () => ipcRenderer.invoke("get-cache-dir"),
   transcribeAudio: (audioPath: string) =>
     ipcRenderer.invoke("transcribe-audio", audioPath),
+  exportVideo: (options: any) =>
+    ipcRenderer.invoke("export-video", options),
   onExtractionProgress: (callback: (progress: any) => void) => {
     ipcRenderer.on("extraction-progress", (_event: any, progress: any) =>
       callback(progress)
@@ -19,6 +21,11 @@ contextBridge.exposeInMainWorld("electron", {
   onTranscriptionProgress: (callback: (status: string) => void) => {
     ipcRenderer.on("transcription-progress", (_event: any, status: string) =>
       callback(status)
+    );
+  },
+  onExportProgress: (callback: (progress: any) => void) => {
+    ipcRenderer.on("export-progress", (_event: any, progress: any) =>
+      callback(progress)
     );
   },
 });

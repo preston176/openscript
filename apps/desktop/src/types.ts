@@ -30,6 +30,27 @@ export interface ExtractionProgress {
   targetSize: string;
 }
 
+// Export types
+export interface ExportProgress {
+  percent: number;
+  currentTime: string;
+  stage: 'preparing' | 'exporting' | 'finalizing' | 'complete';
+}
+
+export interface ExportOptions {
+  videoPath: string;
+  segments: Array<{ startTime: number; endTime: number; deleted: boolean }>;
+  outputPath?: string;
+  format?: 'mp4' | 'mov' | 'webm';
+  quality?: 'low' | 'medium' | 'high';
+}
+
+export interface ExportResult {
+  success?: boolean;
+  canceled?: boolean;
+  outputPath?: string;
+}
+
 // Electron API types
 export interface ElectronAPI {
   selectVideoFile: () => Promise<string | null>;
@@ -37,8 +58,10 @@ export interface ElectronAPI {
   readAudioFile: (audioPath: string) => Promise<ArrayBuffer>;
   getCacheDir: () => Promise<string>;
   transcribeAudio: (audioPath: string) => Promise<any>;
+  exportVideo: (options: ExportOptions) => Promise<ExportResult>;
   onExtractionProgress: (callback: (progress: ExtractionProgress) => void) => void;
   onTranscriptionProgress: (callback: (status: string) => void) => void;
+  onExportProgress: (callback: (progress: ExportProgress) => void) => void;
 }
 
 declare global {
@@ -46,3 +69,4 @@ declare global {
     electron: ElectronAPI;
   }
 }
+
