@@ -1,0 +1,77 @@
+/* Timeline Styles */
+
+.timeline {
+  padding: 1rem;
+  background: var(--surface, #0f0f0f);
+  border-radius: 8px;
+}
+
+.timeline-track {
+  position: relative;
+  height: 40px;
+  background: var(--surface-light, #1a1a1a);
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.timeline-segment {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  background: var(--primary, #6366f1);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.timeline-segment:hover {
+  opacity: 1;
+  transform: scaleY(1.1);
+}
+
+.timeline-segment.selected {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--primary-light, #818cf8);
+}
+
+.timeline-segment.deleted {
+  background: var(--error, #ef4444);
+  opacity: 0.3;
+}
+
+.timeline-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.timeline-playhead::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.timeline-markers {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.time-marker {
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+  font-family: monospace;
+}
