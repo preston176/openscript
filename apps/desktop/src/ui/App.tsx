@@ -5,6 +5,7 @@ import { useToasts, showToast } from './utils/toast.js'
 import { ToastContainer } from './components/ToastContainer.js'
 import { TranscriptEditor } from './components/TranscriptEditor.js'
 import { Timeline } from './components/Timeline.js'
+import { ExportDialog } from './components/ExportDialog.js'
 import { useTranscriptEditor } from './hooks/useTranscriptEditor.js'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
 import { transcriptToSegments, getTotalDuration } from '../types/editor.js'
@@ -28,6 +29,9 @@ function App() {
   // Editor state
   const editor = useTranscriptEditor();
   const totalDuration = getTotalDuration(editor.segments);
+
+  // Export state
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   // Update video time
   useEffect(() => {
@@ -178,7 +182,7 @@ function App() {
       {/* Header */}
       <header className="header">
         <h1>OpenScript</h1>
-        <span className="badge">Phase 3: Text Editing</span>
+        <span className="badge">Phase 4: Export</span>
         {editor.isModified && <span className="modified-badge">Modified</span>}
         {transcript && (
           <div className="header-actions">
@@ -197,6 +201,14 @@ function App() {
               title="Redo (Ctrl+Y)"
             >
               ↷
+            </button>
+            <button
+              className="btn-export"
+              onClick={() => setShowExportDialog(true)}
+              disabled={editor.getActiveSegments().length === 0}
+              title="Export edited video"
+            >
+              Export
             </button>
           </div>
         )}
@@ -318,6 +330,19 @@ function App() {
         )}
       </main>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+
+      {/* Export Dialog */}
+      {showExportDialog && videoPath && (
+        <ExportDialog
+          videoPath={videoPath}
+          segments={editor.segments}
+          onClose={() => setShowExportDialog(false)}
+          onExportComplete={(outputPath) => {
+            setShowExportDialog(false);
+            showToast(`Video exported to ${outputPath}`, 'success');
+          }}
+        />
+      )}
     </div>
   );
 }
