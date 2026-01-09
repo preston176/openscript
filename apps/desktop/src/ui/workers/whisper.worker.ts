@@ -1,14 +1,26 @@
-import { pipeline } from '@xenova/transformers';
+import { pipeline, env } from '@xenova/transformers';
+import type { WorkerMessage, TranscriptResult } from '../../types.js';
 
 let transcriber: any = null;
 
-self.onmessage = async (e) => {
-  const { audioPath } = e.data;
+self.onmessage = async (e: MessageEvent<{ audioData: string; cacheDir?: string }>) => {
+  const { audioData, cacheDir } = e.data;
   
   try {
+    // Configure cache directory if provided
+    if (cacheDir && !transcriber) {
+      env.cacheDir = cacheDir;
+      env.allowLocalModels = true;
+      env.allowRemoteModels = true;
+    }
+    
     // Initialize the transcriber if not already loaded
     if (!transcriber) {
-      self.postMessage({ type: 'loading', message: 'Loading Whisper model...' });
+      const loadingMessage: WorkerMessage = { 
+        type: 'loading', 
+        message: 'Loading Whisper model...' 
+      };
+      self.postMessage(loadingMessage);
       
       transcriber = await pipeline(
         'automatic-speech-recognition',
@@ -18,27 +30,38 @@ self.onmessage = async (e) => {
         }
       );
       
-      self.postMessage({ type: 'loaded', message: 'Model loaded successfully' });
+      const loadedMessage: WorkerMessage = { 
+        type: 'loaded', 
+        message: 'Model loaded successfully' 
+      };
+      self.postMessage(loadedMessage);
     }
     
     // Perform transcription
-    self.postMessage({ type: 'transcribing', message: 'Transcribing audio...' });
+    const transcribingMessage: WorkerMessage = { 
+      type: 'transcribing', 
+      message: 'Transcribing audio...' 
+    };
+    self.postMessage(transcribingMessage);
     
-    const result = await transcriber(audioPath, {
+    // Convert data URL to audio data for transcription
+    const result = await transcriber(audioData, {
       return_timestamps: 'word',
       chunk_length_s: 30,
       stride_length_s: 5
-    });
+    }) as TranscriptResult;
     
-    self.postMessage({ 
+    const completeMessage: WorkerMessage = { 
       type: 'complete',
       transcript: result 
-    });
+    };
+    self.postMessage(completeMessage);
     
   } catch (error) {
-    self.postMessage({ 
+    const errorMessage: WorkerMessage = { 
       type: 'error',
       error: error instanceof Error ? error.message : 'Unknown error occurred'
-    });
+    };
+    self.postMessage(errorMessage);
   }
 };
