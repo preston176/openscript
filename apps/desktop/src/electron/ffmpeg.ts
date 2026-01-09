@@ -14,47 +14,61 @@ export async function extractAudio(
   onProgress?: (progress: ExtractionProgress) => void
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Create temp directory if it doesn't exist
-    const tempDir = path.join(app.getPath("temp"), "openscript");
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
+    // First, check if video has an audio stream
+    ffmpeg.ffprobe(videoPath, (err, metadata) => {
+      if (err) {
+        reject(new Error(`Failed to read video file: ${err.message}`));
+        return;
+      }
 
-    // Generate unique output filename
-    const timestamp = Date.now();
-    const outputPath = path.join(tempDir, `audio-${timestamp}.wav`);
+      const hasAudio = metadata.streams.some(stream => stream.codec_type === 'audio');
+      if (!hasAudio) {
+        reject(new Error('This video does not contain an audio stream. Please select a video with audio.'));
+        return;
+      }
 
-    console.log(`Extracting audio from: ${videoPath}`);
-    console.log(`Output path: ${outputPath}`);
+      // Create temp directory if it doesn't exist
+      const tempDir = path.join(app.getPath("temp"), "openscript");
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
 
-    ffmpeg(videoPath)
-      .output(outputPath)
-      .audioCodec("pcm_s16le") // WAV format for Whisper
-      .audioChannels(1) // Mono
-      .audioFrequency(16000) // 16kHz sample rate (Whisper requirement)
-      .on("start", (commandLine) => {
-        console.log("FFmpeg command:", commandLine);
-      })
-      .on("progress", (progress) => {
-        if (onProgress) {
-          onProgress({
-            percent: progress.percent || 0,
-            currentTime: progress.timemark || "00:00:00",
-            targetSize: progress.targetSize?.toString() || "0kB",
-          });
-        }
-        console.log(`Processing: ${progress.percent?.toFixed(2)}% done`);
-      })
-      .on("end", () => {
-        console.log("Audio extraction completed!");
-        resolve(outputPath);
-      })
-      .on("error", (err, stdout, stderr) => {
-        console.error("FFmpeg error:", err.message);
-        console.error("FFmpeg stderr:", stderr);
-        reject(new Error(`FFmpeg extraction failed: ${err.message}`));
-      })
-      .run();
+      // Generate unique output filename
+      const timestamp = Date.now();
+      const outputPath = path.join(tempDir, `audio-${timestamp}.wav`);
+
+      console.log(`Extracting audio from: ${videoPath}`);
+      console.log(`Output path: ${outputPath}`);
+
+      ffmpeg(videoPath)
+        .output(outputPath)
+        .audioCodec("pcm_s16le") // WAV format for Whisper
+        .audioChannels(1) // Mono
+        .audioFrequency(16000) // 16kHz sample rate (Whisper requirement)
+        .on("start", (commandLine) => {
+          console.log("FFmpeg command:", commandLine);
+        })
+        .on("progress", (progress) => {
+          if (onProgress) {
+            onProgress({
+              percent: progress.percent || 0,
+              currentTime: progress.timemark || "00:00:00",
+              targetSize: progress.targetSize?.toString() || "0kB",
+            });
+          }
+          console.log(`Processing: ${progress.percent?.toFixed(2)}% done`);
+        })
+        .on("end", () => {
+          console.log("Audio extraction completed!");
+          resolve(outputPath);
+        })
+        .on("error", (err, stdout, stderr) => {
+          console.error("FFmpeg error:", err.message);
+          console.error("FFmpeg stderr:", stderr);
+          reject(new Error(`FFmpeg extraction failed: ${err.message}`));
+        })
+        .run();
+    });
   });
 }
 

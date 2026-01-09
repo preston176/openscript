@@ -12,7 +12,7 @@
     "lint": "bunx eslint .",
     "preview": "bunx vite preview",
     "transpile:electron": "bunx tsc --project src/electron/tsconfig.json",
-    "transpile:preload": "bunx tsc src/electron/preload.ts --outDir dist-electron --module nodenext --target esnext --skipLibCheck",
+    "transpile:preload": "bunx tsc src/electron/preload.ts --outDir dist-electron --module commonjs --target esnext --skipLibCheck",
     "dist:mac": "bun run transpile:electron && bun run transpile:preload && bun run build && bunx electron-builder --mac --arm64",
     "dist:win": "bun run transpile:electron && bun run transpile:preload && bun run build && bunx electron-builder --win --x64",
     "dist:linux": "bun run transpile:electron && bun run transpile:preload && bun run build && bunx electron-builder --linux --x64"
