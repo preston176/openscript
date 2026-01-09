@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import './App.css'
-import type { TranscriptResult, WorkerMessage } from '../types.js'
+import type { TranscriptResult } from '../types.js'
 import { useToasts, showToast } from './utils/toast.js'
 import { ToastContainer } from './components/ToastContainer.js'
-
-// TypeScript declarations for Electron API are now in types.ts
+import { TranscriptEditor } from './components/TranscriptEditor.js'
+import { Timeline } from './components/Timeline.js'
+import { useTranscriptEditor } from './hooks/useTranscriptEditor.js'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
+import { transcriptToSegments, getTotalDuration } from '../types/editor.js'
 
 function App() {
   const { toasts, removeToast } = useToasts();
@@ -12,12 +15,83 @@ function App() {
   const [isExtracting, setIsExtracting] = useState(false);
   const [audioPath, setAudioPath] = useState<string | null>(null);
   const [extractionProgress, setExtractionProgress] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Transcription state
-  const [transcript, setTranscript] = useState<any>(null);
+  const [transcript, setTranscript] = useState<TranscriptResult | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcriptionStatus, setTranscriptionStatus] = useState<string>('');
   const [transcriptionProgress, setTranscriptionProgress] = useState(0);
+
+  // Editor state
+  const editor = useTranscriptEditor();
+  const totalDuration = getTotalDuration(editor.segments);
+
+  // Update video time
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, [videoPath]);
+
+  // Seek video to time
+  const handleSeekToTime = useCallback((time: number) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = time;
+    }
+  }, []);
+
+  // Toggle play/pause
+  const handlePlayPause = useCallback(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+    }
+  }, [isPlaying]);
+
+  // Save project (stub for now)
+  const handleSave = useCallback(() => {
+    showToast('Project saved!', 'success');
+  }, []);
+
+  // Delete selected segment
+  const handleDeleteSelected = useCallback(() => {
+    if (editor.selectedSegmentId) {
+      const segment = editor.segments.find(s => s.id === editor.selectedSegmentId);
+      if (segment && !segment.deleted) {
+        editor.deleteSegment(editor.selectedSegmentId);
+      }
+    }
+  }, [editor]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onUndo: editor.undo,
+    onRedo: editor.redo,
+    onDelete: handleDeleteSelected,
+    onPlayPause: handlePlayPause,
+    onSave: handleSave,
+    onEscape: () => editor.selectSegment(null),
+    enabled: !!transcript,
+  });
 
   const handleSelectVideo = async () => {
     try {
@@ -25,6 +99,8 @@ function App() {
       if (path) {
         setVideoPath(path);
         setAudioPath(null);
+        setTranscript(null);
+        editor.reset();
       }
     } catch (error) {
       console.error("Error selecting video:", error);
@@ -38,7 +114,6 @@ function App() {
     setIsExtracting(true);
     setExtractionProgress(0);
 
-    // Listen for progress updates
     window.electron.onExtractionProgress((progress) => {
       setExtractionProgress(Math.round(progress.percent || 0));
     });
@@ -65,7 +140,6 @@ function App() {
     setTranscriptionProgress(0);
 
     try {
-      // Set up progress listener
       window.electron.onTranscriptionProgress((status: string) => {
         setTranscriptionStatus(status);
         if (status.includes('Loading')) {
@@ -77,21 +151,25 @@ function App() {
         }
       });
 
-      // Call transcription in main process
       const result = await window.electron.transcribeAudio(audioPath);
-
       setTranscript(result);
       setTranscriptionStatus('Transcription complete!');
       setTranscriptionProgress(100);
-      setIsTranscribing(false);
 
+      // Convert transcript to editable segments
+      if (result.chunks && result.chunks.length > 0) {
+        const segments = transcriptToSegments(result.chunks);
+        editor.setSegments(segments);
+        showToast('Transcription complete! You can now edit the transcript.', 'success');
+      }
     } catch (error) {
       console.error('Error starting transcription:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to start transcription';
       showToast(errorMessage, 'error');
-      setIsTranscribing(false);
       setTranscriptionStatus('');
       setTranscriptionProgress(0);
+    } finally {
+      setIsTranscribing(false);
     }
   };
 
@@ -100,7 +178,28 @@ function App() {
       {/* Header */}
       <header className="header">
         <h1>OpenScript</h1>
-        <span className="badge">Phase 2: Transcription</span>
+        <span className="badge">Phase 3: Text Editing</span>
+        {editor.isModified && <span className="modified-badge">Modified</span>}
+        {transcript && (
+          <div className="header-actions">
+            <button
+              className="btn-icon"
+              onClick={editor.undo}
+              disabled={!editor.canUndo}
+              title="Undo (Ctrl+Z)"
+            >
+              ↶
+            </button>
+            <button
+              className="btn-icon"
+              onClick={editor.redo}
+              disabled={!editor.canRedo}
+              title="Redo (Ctrl+Y)"
+            >
+              ↷
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -108,12 +207,7 @@ function App() {
         {!videoPath ? (
           <div className="welcome">
             <div className="icon-circle">
-              <svg
-                className="icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -134,91 +228,90 @@ function App() {
             </button>
           </div>
         ) : (
-          <div className="video-container">
-            {/* Video Info */}
-            <div className="video-info">
-              <div>
-                <p className="label">Selected file:</p>
-                <p className="path">{videoPath}</p>
-              </div>
-              <button onClick={handleSelectVideo} className="btn-secondary">
-                Change File
-              </button>
-            </div>
-
-            {/* Video Preview */}
-            <div className="video-preview">
-              <video src={`local-file://${videoPath}`} controls />
-            </div>
-
-            {/* Actions */}
-            <div className="actions">
-              <button
-                onClick={handleExtractAudio}
-                disabled={isExtracting}
-                className="btn-primary"
-              >
-                {isExtracting
-                  ? `Extracting Audio... ${extractionProgress}%`
-                  : "Extract Audio for Transcription"}
-              </button>
-              {audioPath && (
-                <div className="success-badge">
-                  <svg
-                    className="check-icon"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span>Audio extracted!</span>
+          <div className="editor-layout">
+            {/* Left Panel - Video */}
+            <div className="video-panel">
+              <div className="video-info">
+                <div>
+                  <p className="label">Selected file:</p>
+                  <p className="path">{videoPath.split('/').pop()}</p>
                 </div>
-              )}
-            </div>
-
-            {/* Transcription Section */}
-            {audioPath && (
-              <div className="transcription-section">
-                <button
-                  onClick={handleTranscribe}
-                  disabled={isTranscribing || !!transcript}
-                  className="btn-primary"
-                >
-                  {isTranscribing
-                    ? `${transcriptionStatus} ${transcriptionProgress}%`
-                    : transcript
-                      ? "Transcription Complete ✓"
-                      : "Start Transcription"}
+                <button onClick={handleSelectVideo} className="btn-secondary">
+                  Change
                 </button>
+              </div>
 
-                {/* Transcript Display */}
-                {transcript && (
-                  <div className="transcript-container">
-                    <h3>Transcript</h3>
-                    <div className="transcript-text">
-                      {transcript.text || JSON.stringify(transcript, null, 2)}
-                    </div>
-                    {transcript.chunks && transcript.chunks.length > 0 && (
-                      <div className="transcript-segments">
-                        <h4>Segments with Timestamps</h4>
-                        {transcript.chunks.map((chunk: any, index: number) => (
-                          <div key={index} className="segment">
-                            <span className="timestamp">
-                              [{chunk.timestamp[0].toFixed(2)}s - {chunk.timestamp[1].toFixed(2)}s]
-                            </span>
-                            <span className="text">{chunk.text}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+              <div className="video-preview">
+                <video
+                  ref={videoRef}
+                  src={`local-file://${videoPath}`}
+                  controls
+                />
+              </div>
+
+              {/* Timeline */}
+              {transcript && editor.segments.length > 0 && (
+                <Timeline
+                  segments={editor.segments}
+                  currentTime={currentTime}
+                  totalDuration={totalDuration > 0 ? totalDuration : (videoRef.current?.duration || 0)}
+                  selectedSegmentId={editor.selectedSegmentId}
+                  onSeek={handleSeekToTime}
+                  onSelectSegment={editor.selectSegment}
+                />
+              )}
+
+              {/* Actions */}
+              <div className="actions">
+                {!audioPath ? (
+                  <button
+                    onClick={handleExtractAudio}
+                    disabled={isExtracting}
+                    className="btn-primary"
+                  >
+                    {isExtracting
+                      ? `Extracting Audio... ${extractionProgress}%`
+                      : "Extract Audio for Transcription"}
+                  </button>
+                ) : !transcript ? (
+                  <button
+                    onClick={handleTranscribe}
+                    disabled={isTranscribing}
+                    className="btn-primary"
+                  >
+                    {isTranscribing
+                      ? `${transcriptionStatus} ${transcriptionProgress}%`
+                      : "Start Transcription"}
+                  </button>
+                ) : (
+                  <div className="success-badge">
+                    <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Ready to edit!</span>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Right Panel - Transcript Editor */}
+            {transcript && editor.segments.length > 0 && (
+              <div className="transcript-panel">
+                <div className="panel-header">
+                  <h3>Transcript</h3>
+                  <span className="segment-count">
+                    {editor.getActiveSegments().length} / {editor.segments.length} segments
+                  </span>
+                </div>
+                <TranscriptEditor
+                  segments={editor.segments}
+                  selectedSegmentId={editor.selectedSegmentId}
+                  onEditSegment={editor.editSegment}
+                  onDeleteSegment={editor.deleteSegment}
+                  onRestoreSegment={editor.restoreSegment}
+                  onSelectSegment={editor.selectSegment}
+                  onSeekToTime={handleSeekToTime}
+                />
               </div>
             )}
           </div>

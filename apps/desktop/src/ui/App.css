@@ -8,7 +8,16 @@
   --accent: #3b82f6;
   --accent-hover: #2563eb;
   --success: #10b981;
+  --error: #ef4444;
   --border: rgba(255, 255, 255, 0.1);
+  --surface: #0f0f0f;
+  --surface-light: #1a1a1a;
+  --surface-hover: #252525;
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --text: #ffffff;
+  --text-muted: #888;
+  --input-bg: #0a0a0a;
 }
 
 * {
@@ -40,9 +49,7 @@ body {
   display: flex;
   align-items: center;
   padding: 12px 24px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 16px;
 }
 
 .header h1 {
@@ -54,6 +61,44 @@ body {
   font-size: 12px;
   color: var(--text-tertiary);
   white-space: nowrap;
+}
+
+.modified-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border-radius: 4px;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--primary);
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* Main */
@@ -202,14 +247,82 @@ body {
 .actions {
   display: flex;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .actions .btn-primary {
   flex: 1;
   min-width: 200px;
   max-width: 100%;
+}
+
+/* Editor Layout */
+.editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  max-width: 1800px;
+  padding: 0 16px;
+  height: calc(100vh - 100px);
+}
+
+.video-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.video-panel .video-preview {
+  flex: 1;
+  min-height: 200px;
+  margin-bottom: 0;
+}
+
+.transcript-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.segment-count {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 1024px) {
+  .editor-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  
+  .video-panel .video-preview {
+    aspect-ratio: 16 / 9;
+    flex: none;
+  }
+  
+  .transcript-panel {
+    max-height: 400px;
+  }
 }
 
 .success-badge {
