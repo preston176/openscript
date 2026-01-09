@@ -26,21 +26,36 @@
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
+  animation: segment-enter 0.3s ease-out;
+}
+
+@keyframes segment-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .segment:hover {
   background: var(--surface-hover, #252525);
+  transform: translateX(4px);
 }
 
 .segment.selected {
   border-color: var(--primary, #6366f1);
   background: rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
 }
 
 .segment.deleted {
   opacity: 0.5;
   background: rgba(239, 68, 68, 0.1);
   text-decoration: line-through;
+  transform: scale(0.98);
 }
 
 .segment.deleted .segment-text {
