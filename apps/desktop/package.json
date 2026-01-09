@@ -1,7 +1,7 @@
 {
-  "name": "electron-js-app",
+  "name": "openscript",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -48,8 +48,8 @@
     "vite": "^7.0.4",
     "vitest": "^4.0.16"
   },
-  "description": "A modern cross-platform desktop application boilerplate using **Electron**, **React 19**, **TypeScript**, and **Vite**. This project provides a fast, maintainable, and scalable environment for building desktop apps with a web technology stack.",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "description": "Edit video by editing text. A desktop application for text-based video editing powered by AI transcription. 100% local, 100% free.",
+  "keywords": ["video-editor", "transcription", "whisper", "electron", "desktop-app"],
+  "author": "OpenScript Team",
+  "license": "MIT"
 }
