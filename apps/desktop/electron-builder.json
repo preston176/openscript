@@ -22,19 +22,15 @@
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64", "arm64"]
+        "arch": ["arm64"]
       }
     ],
-    "icon": "build/icon.icns",
-    "category": "public.app-category.video",
-    "hardenedRuntime": true,
-    "gatekeeperAssess": false,
-    "entitlements": "build/entitlements.mac.plist",
-    "entitlementsInherit": "build/entitlements.mac.plist"
+    "icon": "build/icon.png",
+    "category": "public.app-category.video"
   },
   "dmg": {
     "title": "${productName}",
-    "icon": "build/icon.icns",
+    "icon": "build/icon.png",
     "contents": [
       {
         "x": 130,
