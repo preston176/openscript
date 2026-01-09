@@ -1,18 +1,13 @@
 import { useState } from 'react'
 import './App.css'
+import type { TranscriptResult, WorkerMessage } from '../types.js'
+import { useToasts, showToast } from './utils/toast.js'
+import { ToastContainer } from './components/ToastContainer.js'
 
-// TypeScript declarations for Electron API
-declare global {
-  interface Window {
-    electron: {
-      selectVideoFile: () => Promise<string | null>;
-      extractAudio: (videoPath: string) => Promise<string>;
-      onExtractionProgress: (callback: (progress: any) => void) => void;
-    };
-  }
-}
+// TypeScript declarations for Electron API are now in types.ts
 
 function App() {
+  const { toasts, removeToast } = useToasts();
   const [videoPath, setVideoPath] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [audioPath, setAudioPath] = useState<string | null>(null);
@@ -33,6 +28,7 @@ function App() {
       }
     } catch (error) {
       console.error("Error selecting video:", error);
+      showToast('Failed to select video file', 'error');
     }
   };
 
@@ -53,7 +49,8 @@ function App() {
       console.log("Audio extracted to:", audio);
     } catch (error) {
       console.error("Error extracting audio:", error);
-      alert(`Failed to extract audio: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to extract audio';
+      showToast(errorMessage, 'error');
     } finally {
       setIsExtracting(false);
       setExtractionProgress(0);
@@ -68,63 +65,30 @@ function App() {
     setTranscriptionProgress(0);
 
     try {
-      // Create web worker
-      const worker = new Worker(
-        new URL('./workers/whisper.worker.ts', import.meta.url),
-        { type: 'module' }
-      );
-
-      // Handle messages from worker
-      worker.onmessage = (e) => {
-        const { type, message, transcript: result, error } = e.data;
-
-        switch (type) {
-          case 'loading':
-            setTranscriptionStatus(message);
-            setTranscriptionProgress(10);
-            break;
-          case 'loaded':
-            setTranscriptionStatus(message);
-            setTranscriptionProgress(30);
-            break;
-          case 'transcribing':
-            setTranscriptionStatus(message);
-            setTranscriptionProgress(50);
-            break;
-          case 'complete':
-            setTranscript(result);
-            setTranscriptionStatus('Transcription complete!');
-            setTranscriptionProgress(100);
-            setIsTranscribing(false);
-            worker.terminate();
-            break;
-          case 'error':
-            console.error('Transcription error:', error);
-            alert(`Transcription failed: ${error}`);
-            setIsTranscribing(false);
-            setTranscriptionStatus('');
-            setTranscriptionProgress(0);
-            worker.terminate();
-            break;
+      // Set up progress listener
+      window.electron.onTranscriptionProgress((status: string) => {
+        setTranscriptionStatus(status);
+        if (status.includes('Loading')) {
+          setTranscriptionProgress(10);
+        } else if (status.includes('loaded')) {
+          setTranscriptionProgress(30);
+        } else if (status.includes('Transcribing')) {
+          setTranscriptionProgress(50);
         }
-      };
+      });
 
-      // Handle worker errors
-      worker.onerror = (error) => {
-        console.error('Worker error:', error);
-        alert(`Worker error: ${error.message}`);
-        setIsTranscribing(false);
-        setTranscriptionStatus('');
-        setTranscriptionProgress(0);
-        worker.terminate();
-      };
+      // Call transcription in main process
+      const result = await window.electron.transcribeAudio(audioPath);
 
-      // Send audio path to worker
-      worker.postMessage({ audioPath });
+      setTranscript(result);
+      setTranscriptionStatus('Transcription complete!');
+      setTranscriptionProgress(100);
+      setIsTranscribing(false);
 
     } catch (error) {
       console.error('Error starting transcription:', error);
-      alert(`Failed to start transcription: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start transcription';
+      showToast(errorMessage, 'error');
       setIsTranscribing(false);
       setTranscriptionStatus('');
       setTranscriptionProgress(0);
@@ -184,7 +148,7 @@ function App() {
 
             {/* Video Preview */}
             <div className="video-preview">
-              <video src={`file://${videoPath}`} controls />
+              <video src={`local-file://${videoPath}`} controls />
             </div>
 
             {/* Actions */}
@@ -260,6 +224,7 @@ function App() {
           </div>
         )}
       </main>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
