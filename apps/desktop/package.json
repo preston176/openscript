@@ -34,6 +34,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "@vitest/coverage-v8": "4.0.16",
     "concurrently": "^9.2.1",
     "cross-env": "^10.0.0",
     "electron-builder": "^26.0.12",
