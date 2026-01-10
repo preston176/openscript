@@ -2,7 +2,7 @@
  * useTranscriptEditor Hook
  * State management for text-based video editing with undo/redo
  */
-import { useReducer, useCallback, useMemo } from 'react';
+import { useReducer, useCallback } from 'react';
 import type { EditableSegment, EditorState, EditorAction } from '../../types/editor';
 
 interface HistoryState {

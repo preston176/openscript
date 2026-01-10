@@ -1,6 +1,7 @@
 import { pipeline, env } from '@xenova/transformers';
 import type { WorkerMessage, TranscriptResult } from '../../types.js';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let transcriber: any = null;
 
 self.onmessage = async (e: MessageEvent<{ audioData: string; cacheDir?: string }>) => {

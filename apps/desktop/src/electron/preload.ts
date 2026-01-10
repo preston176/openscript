@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require("electron");
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
+import type { ExtractionProgress, ExportProgress, ExportOptions } from '../types.js';
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
@@ -11,20 +12,20 @@ contextBridge.exposeInMainWorld("electron", {
   getCacheDir: () => ipcRenderer.invoke("get-cache-dir"),
   transcribeAudio: (audioPath: string) =>
     ipcRenderer.invoke("transcribe-audio", audioPath),
-  exportVideo: (options: any) =>
+  exportVideo: (options: ExportOptions) =>
     ipcRenderer.invoke("export-video", options),
-  onExtractionProgress: (callback: (progress: any) => void) => {
-    ipcRenderer.on("extraction-progress", (_event: any, progress: any) =>
+  onExtractionProgress: (callback: (progress: ExtractionProgress) => void) => {
+    ipcRenderer.on("extraction-progress", (_event: IpcRendererEvent, progress: ExtractionProgress) =>
       callback(progress)
     );
   },
   onTranscriptionProgress: (callback: (status: string) => void) => {
-    ipcRenderer.on("transcription-progress", (_event: any, status: string) =>
+    ipcRenderer.on("transcription-progress", (_event: IpcRendererEvent, status: string) =>
       callback(status)
     );
   },
-  onExportProgress: (callback: (progress: any) => void) => {
-    ipcRenderer.on("export-progress", (_event: any, progress: any) =>
+  onExportProgress: (callback: (progress: ExportProgress) => void) => {
+    ipcRenderer.on("export-progress", (_event: IpcRendererEvent, progress: ExportProgress) =>
       callback(progress)
     );
   },

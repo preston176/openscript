@@ -3,9 +3,8 @@
  * FFmpeg-based video cutting and concatenation
  */
 import ffmpeg from 'fluent-ffmpeg';
-import { app, BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import path from 'path';
-import fs from 'fs';
 
 export interface ExportSegment {
   startTime: number;

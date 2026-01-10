@@ -57,7 +57,7 @@ export interface ElectronAPI {
   extractAudio: (videoPath: string) => Promise<string>;
   readAudioFile: (audioPath: string) => Promise<ArrayBuffer>;
   getCacheDir: () => Promise<string>;
-  transcribeAudio: (audioPath: string) => Promise<any>;
+  transcribeAudio: (audioPath: string) => Promise<TranscriptResult>;
   exportVideo: (options: ExportOptions) => Promise<ExportResult>;
   onExtractionProgress: (callback: (progress: ExtractionProgress) => void) => void;
   onTranscriptionProgress: (callback: (status: string) => void) => void;

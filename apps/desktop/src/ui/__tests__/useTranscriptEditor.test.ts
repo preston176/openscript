@@ -1,7 +1,7 @@
 /**
  * TDD Tests for useTranscriptEditor Hook
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useTranscriptEditor } from '../hooks/useTranscriptEditor';
 import type { EditableSegment } from '../../types/editor';

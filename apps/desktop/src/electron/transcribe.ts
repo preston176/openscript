@@ -2,11 +2,16 @@ import { pipeline } from '@xenova/transformers';
 import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+interface TranscriptionResult {
+  text: string;
+  chunks?: Array<{
+    timestamp: [number, number];
+    text: string;
+  }>;
+}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let transcriber: any = null;
 
 /**
@@ -64,7 +69,7 @@ async function readAudioFile(audioPath: string): Promise<Float32Array> {
 export async function transcribeAudio(
   audioPath: string,
   onProgress?: (status: string) => void
-): Promise<any> {
+): Promise<TranscriptionResult> {
   try {
     // Initialize transcriber
     if (onProgress) onProgress('Loading Whisper model...');
