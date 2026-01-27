@@ -26,14 +26,16 @@ async function initializeTranscriber() {
   // Configure transformers.js to use local cache
   process.env.TRANSFORMERS_CACHE = cacheDir;
   
+  console.log('Initializing Whisper model...');
   transcriber = await pipeline(
     'automatic-speech-recognition',
-    'Xenova/whisper-tiny',
+    'Xenova/whisper-base',
     { 
       quantized: true,
       cache_dir: cacheDir,
     }
   );
+  console.log('Whisper model initialized successfully');
   
   return transcriber;
 }
@@ -80,21 +82,29 @@ export async function transcribeAudio(
     
     // Read and decode audio file
     const audioData = await readAudioFile(audioPath);
+    console.log('Audio data loaded - samples:', audioData.length, 'duration:', (audioData.length / 16000).toFixed(2), 'seconds');
     
     if (onProgress) onProgress('Transcribing audio...');
     
     // Perform transcription with raw audio data
     // transformers.js expects: { raw: Float32Array, sampling_rate: number }
-    const rawResult = await model({
+    const audioInput = {
       raw: audioData,
       sampling_rate: 16000  // Our audio is extracted at 16kHz
-    }, {
-      return_timestamps: 'word',
+    };
+    
+    console.log('Calling model with audio input - samples:', audioInput.raw.length);
+    
+    const rawResult = await model(audioInput, {
+      return_timestamps: true,
       chunk_length_s: 30,
       stride_length_s: 5,
     });
     
     console.log('Raw transcription result:', JSON.stringify(rawResult).substring(0, 500));
+    console.log('Result keys:', Object.keys(rawResult));
+    console.log('Result text:', rawResult.text);
+    console.log('Result chunks:', rawResult.chunks);
     
     // Format the result to match our TranscriptResult interface
     const result: TranscriptionResult = {
