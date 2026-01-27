@@ -85,7 +85,7 @@ export async function transcribeAudio(
     
     // Perform transcription with raw audio data
     // transformers.js expects: { raw: Float32Array, sampling_rate: number }
-    const result = await model({
+    const rawResult = await model({
       raw: audioData,
       sampling_rate: 16000  // Our audio is extracted at 16kHz
     }, {
@@ -93,6 +93,25 @@ export async function transcribeAudio(
       chunk_length_s: 30,
       stride_length_s: 5,
     });
+    
+    console.log('Raw transcription result:', JSON.stringify(rawResult).substring(0, 500));
+    
+    // Format the result to match our TranscriptResult interface
+    const result: TranscriptionResult = {
+      text: rawResult.text || '',
+      chunks: []
+    };
+    
+    // Extract chunks from the result
+    // transformers.js returns chunks in the 'chunks' property
+    if (rawResult.chunks && Array.isArray(rawResult.chunks)) {
+      result.chunks = rawResult.chunks.map((chunk: any) => ({
+        timestamp: chunk.timestamp as [number, number],
+        text: chunk.text
+      }));
+    }
+    
+    console.log('Formatted result - text length:', result.text.length, 'chunks:', result.chunks?.length);
     
     return result;
   } catch (error) {

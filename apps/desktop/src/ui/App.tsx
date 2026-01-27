@@ -156,15 +156,24 @@ function App() {
       });
 
       const result = await window.electron.transcribeAudio(audioPath);
+      console.log('Transcription result received:', result);
+      console.log('Has chunks?', result.chunks);
+      console.log('Chunks length:', result.chunks?.length);
+
       setTranscript(result);
       setTranscriptionStatus('Transcription complete!');
       setTranscriptionProgress(100);
 
       // Convert transcript to editable segments
       if (result.chunks && result.chunks.length > 0) {
+        console.log('Converting chunks to segments...');
         const segments = transcriptToSegments(result.chunks);
+        console.log('Created segments:', segments.length);
         editor.setSegments(segments);
         showToast('Transcription complete! You can now edit the transcript.', 'success');
+      } else {
+        console.warn('No chunks in transcription result!');
+        showToast('Transcription completed but no segments found', 'warning');
       }
     } catch (error) {
       console.error('Error starting transcription:', error);
