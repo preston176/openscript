@@ -6,6 +6,8 @@ import { ToastContainer } from './components/ToastContainer.js'
 import { TranscriptEditor } from './components/TranscriptEditor.js'
 import { Timeline } from './components/Timeline.js'
 import { ExportDialog } from './components/ExportDialog.js'
+import { VideoPlayer } from './components/VideoPlayer.js'
+import { MediaLibrary } from './components/MediaLibrary.js'
 import { useTranscriptEditor } from './hooks/useTranscriptEditor.js'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
 import { transcriptToSegments, getTotalDuration } from '../types/editor.js'
@@ -250,45 +252,33 @@ function App() {
           </div>
         ) : (
           <div className="editor-layout">
-            {/* Left Panel - Video */}
-            <div className="video-panel">
-              <div className="video-info">
-                <div>
-                  <p className="label">Selected file:</p>
-                  <p className="path">{videoPath.split('/').pop()}</p>
-                </div>
-                <button onClick={handleSelectVideo} className="btn-secondary">
-                  Change
-                </button>
-              </div>
+            {/* Left Sidebar - Media Library */}
+            <aside className="sidebar sidebar--left">
+              <MediaLibrary
+                fileName={videoPath?.split('/').pop()}
+                filePath={videoPath || undefined}
+                duration={videoRef.current?.duration}
+                fileSize={undefined}
+                onChangeFile={handleSelectVideo}
+              />
+            </aside>
 
-              <div className="video-preview">
-                <video
-                  ref={videoRef}
-                  src={`local-file://${videoPath}`}
-                  controls
-                />
-              </div>
+            {/* Center Panel - Video Player */}
+            <div className="center-panel">
+              <VideoPlayer
+                videoPath={videoPath ? `local-file://${videoPath}` : undefined}
+                currentTime={currentTime}
+                onTimeUpdate={setCurrentTime}
+                onSeek={handleSeekToTime}
+              />
 
-              {/* Timeline */}
-              {transcript && editor.segments.length > 0 && (
-                <Timeline
-                  segments={editor.segments}
-                  currentTime={currentTime}
-                  totalDuration={totalDuration > 0 ? totalDuration : (videoRef.current?.duration || 0)}
-                  selectedSegmentId={editor.selectedSegmentId}
-                  onSeek={handleSeekToTime}
-                  onSelectSegment={editor.selectSegment}
-                />
-              )}
-
-              {/* Actions */}
-              <div className="actions">
+              {/* Workflow Actions */}
+              <div className="workflow-actions">
                 {!audioPath ? (
                   <button
                     onClick={handleExtractAudio}
                     disabled={isExtracting}
-                    className="btn-primary"
+                    className="btn-workflow"
                   >
                     {isExtracting
                       ? `Extracting Audio... ${extractionProgress}%`
@@ -298,40 +288,56 @@ function App() {
                   <button
                     onClick={handleTranscribe}
                     disabled={isTranscribing}
-                    className="btn-primary"
+                    className="btn-workflow"
                   >
                     {isTranscribing
                       ? `${transcriptionStatus} ${transcriptionProgress}%`
                       : "Start Transcription"}
                   </button>
-                ) : (
-                  <div className="success-badge">
-                    <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Ready to edit!</span>
-                  </div>
-                )}
+                ) : null}
               </div>
             </div>
 
-            {/* Right Panel - Transcript Editor */}
-            {transcript && editor.segments.length > 0 && (
-              <div className="transcript-panel">
-                <div className="panel-header">
-                  <h3>Transcript</h3>
-                  <span className="segment-count">
-                    {editor.getActiveSegments().length} / {editor.segments.length} segments
-                  </span>
+            {/* Right Sidebar - Transcript Editor */}
+            <aside className="sidebar sidebar--right">
+              {transcript && editor.segments.length > 0 ? (
+                <>
+                  <div className="sidebar__header">
+                    <h3>Transcript</h3>
+                    <span className="segment-count">
+                      {editor.getActiveSegments().length} / {editor.segments.length} segments
+                    </span>
+                  </div>
+                  <TranscriptEditor
+                    segments={editor.segments}
+                    selectedSegmentId={editor.selectedSegmentId}
+                    onEditSegment={editor.editSegment}
+                    onDeleteSegment={editor.deleteSegment}
+                    onRestoreSegment={editor.restoreSegment}
+                    onSelectSegment={editor.selectSegment}
+                    onSeekToTime={handleSeekToTime}
+                  />
+                </>
+              ) : (
+                <div className="sidebar__empty">
+                  <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <p>Transcript will appear here after transcription</p>
                 </div>
-                <TranscriptEditor
+              )}
+            </aside>
+
+            {/* Bottom Panel - Timeline */}
+            {transcript && editor.segments.length > 0 && (
+              <div className="timeline-panel">
+                <Timeline
                   segments={editor.segments}
+                  currentTime={currentTime}
+                  totalDuration={totalDuration > 0 ? totalDuration : (videoRef.current?.duration || 0)}
                   selectedSegmentId={editor.selectedSegmentId}
-                  onEditSegment={editor.editSegment}
-                  onDeleteSegment={editor.deleteSegment}
-                  onRestoreSegment={editor.restoreSegment}
+                  onSeek={handleSeekToTime}
                   onSelectSegment={editor.selectSegment}
-                  onSeekToTime={handleSeekToTime}
                 />
               </div>
             )}
