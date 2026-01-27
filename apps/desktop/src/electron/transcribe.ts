@@ -95,10 +95,10 @@ export async function transcribeAudio(
     
     console.log('Calling model with audio input - samples:', audioInput.raw.length);
     
+    // Call the model with simplified parameters
+    // Note: chunk_length_s: 30 can cause issues with empty results
     const rawResult = await model(audioInput, {
       return_timestamps: true,
-      chunk_length_s: 30,
-      stride_length_s: 5,
     });
     
     console.log('Raw transcription result:', JSON.stringify(rawResult).substring(0, 500));
