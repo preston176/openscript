@@ -86,18 +86,11 @@ export async function transcribeAudio(
     
     if (onProgress) onProgress('Transcribing audio...');
     
-    // Perform transcription with raw audio data
-    // transformers.js expects: { raw: Float32Array, sampling_rate: number }
-    const audioInput = {
-      raw: audioData,
-      sampling_rate: 16000  // Our audio is extracted at 16kHz
-    };
-    
-    console.log('Calling model with audio input - samples:', audioInput.raw.length);
-    
     // Call the model with simplified parameters
-    // Note: chunk_length_s: 30 can cause issues with empty results
-    const rawResult = await model(audioInput, {
+    // IMPORTANT: transformers.js expects the raw Float32Array directly, not wrapped in an object!
+    console.log('Calling model with audio data - type:', audioData.constructor.name, 'samples:', audioData.length);
+    
+    const rawResult = await model(audioData, {
       return_timestamps: true,
     });
     
