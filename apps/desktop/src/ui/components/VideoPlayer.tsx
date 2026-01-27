@@ -23,15 +23,23 @@ export function VideoPlayer({ videoPath, currentTime = 0, onTimeUpdate, onSeek }
         }
     }, [currentTime]);
 
-    const togglePlay = () => {
+    const togglePlay = async () => {
         if (!videoRef.current) return;
 
-        if (isPlaying) {
-            videoRef.current.pause();
-        } else {
-            videoRef.current.play();
+        try {
+            if (isPlaying) {
+                videoRef.current.pause();
+                setIsPlaying(false);
+            } else {
+                await videoRef.current.play();
+                setIsPlaying(true);
+            }
+        } catch (error) {
+            // Ignore AbortError - happens when play/pause is called rapidly
+            if (error instanceof Error && error.name !== 'AbortError') {
+                console.error('Video playback error:', error);
+            }
         }
-        setIsPlaying(!isPlaying);
     };
 
     const handleTimeUpdate = () => {
