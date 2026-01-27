@@ -9,6 +9,7 @@
   border-radius: 12px;
   padding: var(--space-4);
   overflow-y: auto;
+  min-height: 0; /* Important for flex children */
 }
 
 .media-library__section {

@@ -193,10 +193,11 @@
   flex: 1;
   display: grid;
   grid-template-columns: 280px 1fr 380px;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr 180px;
   gap: var(--space-4);
   padding: var(--space-4);
   overflow: hidden;
+  max-height: calc(100vh - 64px); /* Account for header */
 }
 
 /* Sidebars */
@@ -204,6 +205,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0; /* Important for flex children */
 }
 
 .sidebar--left {
@@ -225,6 +227,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .sidebar__header h3 {
@@ -270,13 +273,15 @@
   flex-direction: column;
   gap: var(--space-4);
   overflow: hidden;
+  min-height: 0; /* Important for flex children */
 }
 
 /* Workflow Actions */
 .workflow-actions {
   display: flex;
   justify-content: center;
-  padding: var(--space-4);
+  padding: var(--space-3);
+  flex-shrink: 0;
 }
 
 .btn-workflow {
@@ -310,7 +315,8 @@
   background: var(--bg-secondary);
   border-radius: 12px;
   padding: var(--space-4);
-  max-height: 200px;
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* Responsive */

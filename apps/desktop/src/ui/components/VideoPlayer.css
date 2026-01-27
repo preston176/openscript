@@ -8,6 +8,7 @@
   background: var(--bg-secondary);
   border-radius: 12px;
   overflow: hidden;
+  min-height: 0; /* Important for flex children */
 }
 
 .video-player__preview {
@@ -18,6 +19,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  min-height: 0; /* Important for flex children */
 }
 
 .video-player__preview video {
