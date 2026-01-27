@@ -105,14 +105,19 @@ ipcMain.handle("transcribe-audio", async (event, audioPath: string) => {
   try {
     const { transcribeAudio } = await import("./transcribe.js");
     
-    // Send progress updates
+    // Send progress updates with safety check
     const sendProgress = (status: string) => {
-      if (mainWindow) {
-        mainWindow.webContents.send("transcription-progress", status);
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        try {
+          mainWindow.webContents.send("transcription-progress", status);
+        } catch (err) {
+          console.warn("Could not send progress update:", err);
+        }
       }
     };
     
     const result = await transcribeAudio(audioPath, sendProgress);
+    console.log("Transcription result:", JSON.stringify(result).substring(0, 200));
     return result;
   } catch (error) {
     console.error("Transcription error:", error);
