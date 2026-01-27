@@ -2,7 +2,7 @@
  * Timeline Component
  * Visual representation of transcript segments with playback position
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { EditableSegment } from '../../types/editor';
 import './Timeline.css';
 
@@ -23,6 +23,8 @@ export function Timeline({
     onSeek,
     onSelectSegment,
 }: TimelineProps) {
+    const [zoom, setZoom] = useState(1);
+
     const playheadPosition = useMemo(() => {
         if (totalDuration === 0) return 0;
         return (currentTime / totalDuration) * 100;
@@ -43,33 +45,67 @@ export function Timeline({
         return { left: `${left}%`, width: `${width}%` };
     };
 
+    const handleZoomIn = () => setZoom(Math.min(zoom + 0.5, 3));
+    const handleZoomOut = () => setZoom(Math.max(zoom - 0.5, 1));
+
     return (
         <div className="timeline" data-testid="timeline">
-            <div className="timeline-track" onClick={handleTimelineClick}>
-                {/* Segments */}
-                {segments.map((segment) => (
-                    <div
-                        key={segment.id}
-                        className={`timeline-segment ${segment.deleted ? 'deleted' : ''} ${selectedSegmentId === segment.id ? 'selected' : ''
-                            }`}
-                        style={getSegmentStyle(segment)}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectSegment(segment.id);
-                            if (!segment.deleted) {
-                                onSeek(segment.startTime);
-                            }
-                        }}
-                        data-testid={`segment-${segment.id}`}
-                    />
-                ))}
+            <div className="timeline-controls">
+                <div className="timeline-controls__left">
+                    <div className="timeline-controls__zoom">
+                        <button
+                            className="timeline-controls__zoom-btn"
+                            onClick={handleZoomOut}
+                            disabled={zoom <= 1}
+                            title="Zoom out"
+                        >
+                            −
+                        </button>
+                        <span className="timeline-controls__zoom-level">{Math.round(zoom * 100)}%</span>
+                        <button
+                            className="timeline-controls__zoom-btn"
+                            onClick={handleZoomIn}
+                            disabled={zoom >= 3}
+                            title="Zoom in"
+                        >
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                {/* Playhead */}
+            <div className="timeline-track-container">
                 <div
-                    className="timeline-playhead"
-                    style={{ left: `${playheadPosition}%` }}
-                    data-testid="playhead"
-                />
+                    className="timeline-track"
+                    onClick={handleTimelineClick}
+                    style={{ width: `${zoom * 100}%` }}
+                >
+                    {/* Segments */}
+                    {segments.map((segment) => (
+                        <div
+                            key={segment.id}
+                            className={`timeline-segment ${segment.deleted ? 'deleted' : ''} ${selectedSegmentId === segment.id ? 'selected' : ''
+                                }`}
+                            style={getSegmentStyle(segment)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectSegment(segment.id);
+                                if (!segment.deleted) {
+                                    onSeek(segment.startTime);
+                                }
+                            }}
+                            data-testid={`segment-${segment.id}`}
+                            title={segment.text}
+                        />
+                    ))}
+
+                    {/* Playhead */}
+                    <div
+                        className="timeline-playhead"
+                        style={{ left: `${playheadPosition}%` }}
+                        data-testid="playhead"
+                    />
+                </div>
             </div>
 
             {/* Time markers */}
