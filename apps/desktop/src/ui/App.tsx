@@ -266,6 +266,7 @@ function App() {
             {/* Center Panel - Video Player */}
             <div className="center-panel">
               <VideoPlayer
+                ref={videoRef}
                 videoPath={videoPath ? `local-file://${videoPath}` : undefined}
                 currentTime={currentTime}
                 onTimeUpdate={setCurrentTime}
