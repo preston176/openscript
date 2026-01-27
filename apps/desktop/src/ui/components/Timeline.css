@@ -1,44 +1,102 @@
-/* Timeline Styles */
+/* Timeline Component - Professional Design */
 
 .timeline {
-  padding: 1rem;
-  background: var(--surface, #0f0f0f);
-  border-radius: 8px;
+  height: var(--timeline-height);
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.timeline-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timeline-controls {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.timeline-track-container {
+  flex: 1;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-4) var(--space-6);
 }
 
 .timeline-track {
   position: relative;
-  height: 40px;
-  background: var(--surface-light, #1a1a1a);
-  border-radius: 4px;
+  height: 80px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
+  min-width: 100%;
 }
 
 .timeline-segment {
   position: absolute;
-  top: 4px;
-  bottom: 4px;
-  background: var(--primary, #6366f1);
-  border-radius: 2px;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.8;
+  transition: all var(--transition-fast);
+  opacity: 0.9;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  overflow: hidden;
 }
 
 .timeline-segment:hover {
   opacity: 1;
-  transform: scaleY(1.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
 }
 
 .timeline-segment.selected {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--primary-light, #818cf8);
+  box-shadow: 0 0 0 2px var(--accent-hover), var(--shadow-lg);
+  z-index: 11;
 }
 
 .timeline-segment.deleted {
-  background: var(--error, #ef4444);
-  opacity: 0.3;
+  background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+  opacity: 0.4;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.timeline-segment.deleted:hover {
+  opacity: 0.6;
+}
+
+.segment-text {
+  font-size: var(--text-xs);
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--font-medium);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .timeline-playhead {
@@ -46,32 +104,65 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: #fff;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  background: white;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
   pointer-events: none;
-  z-index: 10;
+  z-index: 20;
 }
 
 .timeline-playhead::before {
   content: '';
   position: absolute;
-  top: -4px;
-  left: -4px;
-  width: 10px;
-  height: 10px;
-  background: #fff;
+  top: -6px;
+  left: -5px;
+  width: 12px;
+  height: 12px;
+  background: white;
   border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-playhead::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: -5px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .timeline-markers {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
-  padding: 0 0.25rem;
+  padding: var(--space-2) var(--space-6);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
 }
 
 .time-marker {
-  font-size: 0.75rem;
-  color: var(--text-muted, #888);
-  font-family: monospace;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-weight: var(--font-medium);
+}
+
+/* Scrollbar for timeline */
+.timeline-track-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.timeline-track-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.timeline-track-container::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+.timeline-track-container::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
 }
