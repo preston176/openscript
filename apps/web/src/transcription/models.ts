@@ -7,19 +7,19 @@ export const TRANSCRIPTION_MODELS: TranscriptionModel[] = [
 	{
 		id: "whisper-tiny",
 		name: "Tiny",
-		huggingFaceId: "onnx-community/whisper-tiny",
+		huggingFaceId: "Xenova/whisper-tiny",
 		description: "Fastest, lower accuracy",
 	},
 	{
 		id: "whisper-small",
 		name: "Small",
-		huggingFaceId: "onnx-community/whisper-small",
+		huggingFaceId: "Xenova/whisper-small",
 		description: "Good balance of speed and accuracy",
 	},
 	{
 		id: "whisper-medium",
 		name: "Medium",
-		huggingFaceId: "onnx-community/whisper-medium",
+		huggingFaceId: "Xenova/whisper-medium",
 		description: "Higher accuracy, slower",
 	},
 	{

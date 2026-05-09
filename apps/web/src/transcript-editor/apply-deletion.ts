@@ -1,4 +1,9 @@
 import type { EditorCore } from "@/core";
+import { BatchCommand, type Command } from "@/commands";
+import {
+	DeleteElementsCommand,
+	SplitElementsCommand,
+} from "@/commands/timeline";
 import type { SceneTracks, TimelineElement } from "@/timeline";
 import { mediaTimeFromSeconds, type MediaTime } from "@/wasm";
 
@@ -18,20 +23,16 @@ export interface WordRange {
 }
 
 /**
- * Delete a list of word ranges from the timeline.
+ * Delete a list of word ranges from the timeline as a single undo step.
  *
- * For each range, finds elements covering it on every track and either splits
- * them at the range boundaries (deleting the middle piece) or deletes the
- * whole element if it sits entirely inside the range. Adjacent ranges are
- * merged first to minimise the number of splits.
+ * Builds split + delete commands, executes each one (so subsequent splits can
+ * read the resulting element IDs from the live scene state), then wraps the
+ * sequence in a `BatchCommand` and registers it with the command manager.
+ * One Cmd+Z undoes the whole transcript edit.
  *
  * Ranges are processed latest-first so deletions don't shift the time
  * coordinates of earlier ranges. (Without ripple, deletions leave gaps —
  * coordinates are stable. Ripple is not yet supported.)
- *
- * The whole batch is one undo step (each splitElements/deleteElements call is
- * already an atomic command in opencut's command system; we issue them in
- * order and rely on the user's Ctrl+Z stepping through them).
  */
 export function applyTranscriptDeletions({
 	editor,
@@ -43,13 +44,20 @@ export function applyTranscriptDeletions({
 	if (ranges.length === 0) return;
 	const merged = mergeRanges({ ranges });
 
+	const executed: Command[] = [];
+
 	for (let i = merged.length - 1; i >= 0; i--) {
 		const range = merged[i];
 		const startTime = mediaTimeFromSeconds({ seconds: range.startSeconds });
 		const endTime = mediaTimeFromSeconds({ seconds: range.endSeconds });
 		if (endTime <= startTime) continue;
-		deleteTimelineRange({ editor, startTime, endTime });
+		buildDeleteRangeCommands({ editor, startTime, endTime, executed });
 	}
+
+	if (executed.length === 0) return;
+
+	const batch = new BatchCommand(executed);
+	editor.command.push({ command: batch });
 }
 
 function mergeRanges({ ranges }: { ranges: WordRange[] }): WordRange[] {
@@ -68,14 +76,16 @@ function mergeRanges({ ranges }: { ranges: WordRange[] }): WordRange[] {
 	return merged;
 }
 
-function deleteTimelineRange({
+function buildDeleteRangeCommands({
 	editor,
 	startTime,
 	endTime,
+	executed,
 }: {
 	editor: EditorCore;
 	startTime: MediaTime;
 	endTime: MediaTime;
+	executed: Command[];
 }): void {
 	const tracks = editor.scenes.getActiveSceneOrNull()?.tracks;
 	if (!tracks) return;
@@ -91,61 +101,52 @@ function deleteTimelineRange({
 	for (const cov of covering) {
 		const startsBefore = cov.startTime < startTime;
 		const endsAfter = cov.endTime > endTime;
-		if (!startsBefore && !endsAfter) {
-			fullyContained.push({ trackId: cov.trackId, elementId: cov.elementId });
-		} else if (startsBefore && endsAfter) {
-			straddleBoth.push({ trackId: cov.trackId, elementId: cov.elementId });
-		} else if (startsBefore) {
-			partialLeft.push({ trackId: cov.trackId, elementId: cov.elementId });
-		} else {
-			partialRight.push({ trackId: cov.trackId, elementId: cov.elementId });
-		}
+		const ref: ElementRef = { trackId: cov.trackId, elementId: cov.elementId };
+		if (!startsBefore && !endsAfter) fullyContained.push(ref);
+		else if (startsBefore && endsAfter) straddleBoth.push(ref);
+		else if (startsBefore) partialLeft.push(ref);
+		else partialRight.push(ref);
 	}
 
-	// 1. Elements that contain the whole range: split at endTime first (capturing
-	//    the right piece, which we keep), then split at startTime (the right of
-	//    that becomes the middle, which we delete).
 	const middleFromStraddleBoth: ElementRef[] = [];
 	if (straddleBoth.length > 0) {
-		// Split at endTime — right side is the surviving tail.
-		editor.timeline.splitElements({
+		// Split at endTime; original IDs become LEFT [origStart, endTime).
+		runSplit({
+			editor,
 			elements: straddleBoth,
 			splitTime: endTime,
-			retainSide: "both",
+			executed,
 		});
-		// Now the original IDs in straddleBoth are the LEFT piece [origStart, endTime).
-		// Split those at startTime — right side is the middle [startTime, endTime).
-		const middlePieces = editor.timeline.splitElements({
+		// Split those at startTime; right side is the middle [startTime, endTime).
+		const middle = runSplit({
+			editor,
 			elements: straddleBoth,
 			splitTime: startTime,
-			retainSide: "both",
+			executed,
 		});
-		middleFromStraddleBoth.push(...middlePieces);
+		middleFromStraddleBoth.push(...middle);
 	}
 
-	// 2. Elements straddling startTime only (left side survives, right side gets
-	//    deleted because it falls fully inside the range).
 	const rightOfPartialLeft: ElementRef[] = [];
 	if (partialLeft.length > 0) {
-		const rightPieces = editor.timeline.splitElements({
+		const right = runSplit({
+			editor,
 			elements: partialLeft,
 			splitTime: startTime,
-			retainSide: "both",
+			executed,
 		});
-		rightOfPartialLeft.push(...rightPieces);
+		rightOfPartialLeft.push(...right);
 	}
 
-	// 3. Elements straddling endTime only (left side falls fully inside the
-	//    range, right side survives).
 	const leftOfPartialRight: ElementRef[] = [];
 	if (partialRight.length > 0) {
-		// Original IDs become the LEFT piece [origStart, endTime).
-		// We capture them BEFORE the split returns the right side.
+		// Original IDs become the LEFT piece [origStart, endTime). Capture before split.
 		leftOfPartialRight.push(...partialRight);
-		editor.timeline.splitElements({
+		runSplit({
+			editor,
 			elements: partialRight,
 			splitTime: endTime,
-			retainSide: "both",
+			executed,
 		});
 	}
 
@@ -157,8 +158,31 @@ function deleteTimelineRange({
 	];
 
 	if (toDelete.length > 0) {
-		editor.timeline.deleteElements({ elements: toDelete });
+		const cmd = new DeleteElementsCommand({ elements: toDelete });
+		cmd.execute();
+		executed.push(cmd);
 	}
+}
+
+function runSplit({
+	editor: _editor,
+	elements,
+	splitTime,
+	executed,
+}: {
+	editor: EditorCore;
+	elements: ElementRef[];
+	splitTime: MediaTime;
+	executed: Command[];
+}): ElementRef[] {
+	const cmd = new SplitElementsCommand({
+		elements,
+		splitTime,
+		retainSide: "both",
+	});
+	cmd.execute();
+	executed.push(cmd);
+	return cmd.getRightSideElements();
 }
 
 function findCoveringElements({
