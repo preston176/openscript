@@ -1,25 +1,25 @@
 {
-  "name": "opencut",
+  "name": "openscript",
   "packageManager": "bun@1.2.18",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "build:tools": "turbo run build --filter=@opencut/tools",
+    "build:tools": "turbo run build --filter=@openscript/tools",
     "build:wasm": "wasm-pack build rust/wasm --target bundler --out-dir pkg",
-    "build:web": "turbo run build --filter=@opencut/web",
-    "deploy:web": "turbo run deploy --filter=@opencut/web",
-    "dev:tools": "turbo run dev --filter=@opencut/tools",
+    "build:web": "turbo run build --filter=@openscript/web",
+    "deploy:web": "turbo run deploy --filter=@openscript/web",
+    "dev:tools": "turbo run dev --filter=@openscript/tools",
     "dev:wasm": "cargo watch -w rust/crates -w rust/wasm/src -s 'wasm-pack build rust/wasm --target bundler --out-dir pkg'",
-    "dev:web": "turbo run dev --filter=@opencut/web",
+    "dev:web": "turbo run dev --filter=@openscript/web",
     "format:web": "prettier apps/web/src/services/renderer --write",
     "generate:fonts": "npx tsx apps/web/scripts/generate-font-sprites.ts",
     "lint:web": "eslint apps/web/src --ext .ts,.tsx",
     "lint:web:fix": "eslint apps/web/src --ext .ts,.tsx --fix",
-    "preview:web": "turbo run preview --filter=@opencut/web",
+    "preview:web": "turbo run preview --filter=@openscript/web",
     "publish:wasm": "bun run build:wasm && npm publish rust/wasm/pkg --access public",
-    "start:tools": "turbo run start --filter=@opencut/tools",
+    "start:tools": "turbo run start --filter=@openscript/tools",
     "test": "bun test"
   },
   "dependencies": {
@@ -27,7 +27,6 @@
     "@types/react-dom": "^19.2.3",
     "better-auth": "^1.4.15",
     "next": "^16.1.3",
-    "opencut": ".",
     "opencut-wasm": "^0.2.10"
   },
   "devDependencies": {

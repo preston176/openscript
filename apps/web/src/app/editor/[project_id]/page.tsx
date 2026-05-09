@@ -23,7 +23,6 @@ import { useEditor } from "@/editor/use-editor";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
-import { ChangelogNotification } from "@/changelog/components/changelog-notification";
 import {
 	createPreviewOverlayControl,
 	isPreviewOverlayVisible,
@@ -51,7 +50,6 @@ export default function Editor() {
 					</div>
 					<Onboarding />
 					<MigrationDialog />
-					<ChangelogNotification />
 				</div>
 			</EditorProvider>
 		</MobileGate>
@@ -65,7 +63,7 @@ function DegradedRendererBanner() {
 
 	return (
 		<div className="bg-accent border-b h-9 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-			<span>For the best experience, open OpenCut in Chrome.</span>
+			<span>For the best experience, open OpenScript in Chrome.</span>
 			<Button
 				variant="text"
 				size="icon"

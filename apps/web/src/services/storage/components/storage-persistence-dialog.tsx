@@ -26,7 +26,7 @@ export function StoragePersistenceDialog() {
 						runs low.
 					</p>
 					<p className="text-base text-muted-foreground">
-						Allow OpenCut to protect them?
+						Allow OpenScript to protect them?
 					</p>
 				</DialogBody>
 				<DialogFooter>

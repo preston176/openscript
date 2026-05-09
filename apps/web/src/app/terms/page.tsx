@@ -10,13 +10,13 @@ import { Separator } from "@/components/ui/separator";
 import { SOCIAL_LINKS } from "@/site/social";
 
 export const metadata: Metadata = {
-	title: "Terms of Service - OpenCut",
+	title: "Terms of Service - OpenScript",
 	description:
-		"OpenCut's Terms of Service. Fair, transparent terms for our free and open-source video editor.",
+		"OpenScript's Terms of Service. Fair, transparent terms for our free and open-source video editor.",
 	openGraph: {
-		title: "Terms of Service - OpenCut",
+		title: "Terms of Service - OpenScript",
 		description:
-			"OpenCut's Terms of Service. Fair, transparent terms for our free and open-source video editor.",
+			"OpenScript's Terms of Service. Fair, transparent terms for our free and open-source video editor.",
 		type: "website",
 	},
 };
@@ -70,10 +70,10 @@ export default function TermsPage() {
 						<p className="mt-4">
 							Questions? Email us at{" "}
 							<a
-								href="mailto:oss@opencut.app"
+								href="mailto:your-contact-email@example.com"
 								className="text-primary hover:underline"
 							>
-								oss@opencut.app
+								your-contact-email@example.com
 							</a>
 						</p>
 					</AccordionContent>
@@ -87,7 +87,7 @@ export default function TermsPage() {
 					processing happens locally on your device. We never see, store, or
 					have access to your files. We make no claims to ownership, licensing,
 					or rights over your videos, projects, or any content you create using
-					OpenCut.
+					OpenScript.
 				</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
@@ -95,25 +95,25 @@ export default function TermsPage() {
 					</li>
 					<li>You retain all intellectual property rights to your content</li>
 					<li>You can export and use your content however you choose</li>
-					<li>No watermarks, no licensing restrictions from OpenCut</li>
+					<li>No watermarks, no licensing restrictions from OpenScript</li>
 				</ul>
 			</section>
 
 			<section className="flex flex-col gap-3">
-				<h2 className="text-2xl font-semibold">How You Can Use OpenCut</h2>
-				<p>OpenCut is free for personal and commercial use. You can:</p>
+				<h2 className="text-2xl font-semibold">How You Can Use OpenScript</h2>
+				<p>OpenScript is free for personal and commercial use. You can:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
 						Create videos for personal, educational, or commercial purposes
 					</li>
-					<li>Use OpenCut for client work and paid projects</li>
-					<li>Share and distribute videos created with OpenCut</li>
+					<li>Use OpenScript for client work and paid projects</li>
+					<li>Share and distribute videos created with OpenScript</li>
 					<li>
-						Modify and distribute the OpenCut software (under MIT license)
+						Modify and distribute the OpenScript software (under MIT license)
 					</li>
 				</ul>
 				<p>
-					You&apos;re responsible for how you use OpenCut and the content you
+					You&apos;re responsible for how you use OpenScript and the content you
 					create. Don&apos;t use it for anything illegal in your jurisdiction.
 				</p>
 			</section>
@@ -123,14 +123,14 @@ export default function TermsPage() {
 				<p>
 					AI features like auto captions run entirely in your browser using
 					on-device models. No content is uploaded to any server. These features
-					are optional - you can use OpenCut without them.
+					are optional - you can use OpenScript without them.
 				</p>
 			</section>
 
 			<section className="flex flex-col gap-3">
 				<h2 className="text-2xl font-semibold">Service</h2>
 				<p>
-					OpenCut does not currently require an account. The service is provided
+					OpenScript does not currently require an account. The service is provided
 					&quot;as is&quot; without warranties. While we strive for
 					reliability, we can&apos;t guarantee uninterrupted service.
 				</p>
@@ -138,10 +138,10 @@ export default function TermsPage() {
 
 			<section className="flex flex-col gap-3">
 				<h2 className="text-2xl font-semibold">Open Source Benefits</h2>
-				<p>Because OpenCut is open source, you have additional rights:</p>
+				<p>Because OpenScript is open source, you have additional rights:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>Review our code to see exactly how we handle your data</li>
-					<li>Self-host OpenCut on your own servers</li>
+					<li>Self-host OpenScript on your own servers</li>
 					<li>Modify the software to suit your needs</li>
 					<li>Contribute improvements back to the community</li>
 				</ul>
@@ -162,7 +162,7 @@ export default function TermsPage() {
 			<section className="flex flex-col gap-3">
 				<h2 className="text-2xl font-semibold">Limitations and Liability</h2>
 				<p>
-					OpenCut is provided free of charge. To the extent permitted by law:
+					OpenScript is provided free of charge. To the extent permitted by law:
 				</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>We&apos;re not liable for any loss of data or content</li>
@@ -182,7 +182,7 @@ export default function TermsPage() {
 
 			<section className="flex flex-col gap-3">
 				<h2 className="text-2xl font-semibold">Service Changes</h2>
-				<p>We may update OpenCut and these terms:</p>
+				<p>We may update OpenScript and these terms:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>We&apos;ll notify you of significant changes to these terms</li>
 					<li>Continued use means you accept any updates</li>
@@ -193,7 +193,7 @@ export default function TermsPage() {
 
 			<section className="flex flex-col gap-3">
 				<h2 className="text-2xl font-semibold">Stopping Use</h2>
-				<p>You can stop using OpenCut at any time:</p>
+				<p>You can stop using OpenScript at any time:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>Clear your browser data to remove local projects</li>
 				</ul>
@@ -214,10 +214,10 @@ export default function TermsPage() {
 					</a>
 					, email us at{" "}
 					<a
-						href="mailto:oss@opencut.app"
+						href="mailto:your-contact-email@example.com"
 						className="text-primary hover:underline"
 					>
-						oss@opencut.app
+						your-contact-email@example.com
 					</a>
 					, or reach out on{" "}
 					<a
