@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { AssetsPanel } from "@/components/editor/panels/assets";
 import { PropertiesPanel } from "@/components/editor/panels/properties";
+import { TranscriptPanel } from "@/transcript-editor/transcript-panel";
 import { Timeline } from "@/timeline/components";
 import { PreviewPanel } from "@/preview/components";
 import { EditorHeader } from "@/components/editor/editor-header";
@@ -81,6 +82,9 @@ function DegradedRendererBanner() {
 function EditorLayout() {
 	usePasteMedia();
 	const { panels, setPanel } = usePanelStore();
+	const [rightPanel, setRightPanel] = useState<"properties" | "transcript">(
+		"properties",
+	);
 	const activeScene = useEditor((editor) =>
 		editor.scenes.getActiveSceneOrNull(),
 	);
@@ -189,7 +193,31 @@ function EditorLayout() {
 						maxSize={40}
 						className="min-w-0"
 					>
-						<PropertiesPanel />
+						<div className="flex h-full flex-col gap-2">
+							<div className="flex shrink-0 gap-1">
+								<Button
+									size="sm"
+									variant={rightPanel === "properties" ? "default" : "text"}
+									onClick={() => setRightPanel("properties")}
+								>
+									Properties
+								</Button>
+								<Button
+									size="sm"
+									variant={rightPanel === "transcript" ? "default" : "text"}
+									onClick={() => setRightPanel("transcript")}
+								>
+									Transcript
+								</Button>
+							</div>
+							<div className="min-h-0 flex-1">
+								{rightPanel === "properties" ? (
+									<PropertiesPanel />
+								) : (
+									<TranscriptPanel />
+								)}
+							</div>
+						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</ResizablePanel>
