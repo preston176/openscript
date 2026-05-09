@@ -1,0 +1,7 @@
+*.json
+*.svg
+*.xml
+*.lock
+**/dist/**
+**/build/**
+**/node_modules/**

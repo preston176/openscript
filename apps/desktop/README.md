@@ -1,138 +1,47 @@
-# Electron + React + TypeScript + Vite
+# Desktop
 
-A modern cross-platform desktop application boilerplate using **Electron**, **React 19**, **TypeScript**, and **Vite**. This project provides a fast, maintainable, and scalable environment for building desktop apps with a web technology stack.
+The native desktop app, built with [GPUI](https://gpui.rs).
 
----
+## Getting started
 
-## Features
-
-- ⚡ **Vite** for lightning-fast React development and HMR
-- 🖥️ **Electron** for native desktop app capabilities
-- 🛠️ **TypeScript** for type safety across the stack
-- 🧹 **ESLint** for code quality and consistency
-- 📦 **electron-builder** for easy packaging and distribution (Windows, macOS, Linux)
-- 🔄 Unified dev workflow for both renderer (React) and main (Electron) processes
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
-
-### Installation
+**1. Install Rust:**
 
 ```bash
-npm install
+# Linux / macOS / WSL
+./script/setup-rust
 ```
 
-### Development
+```powershell
+# Windows
+powershell -ExecutionPolicy Bypass -File .\script\setup-rust.ps1
+```
 
-Start both the React renderer and Electron main process in parallel:
+Both scripts skip installation if Rust is already present. On Linux/macOS/WSL only: after a fresh install, reload your shell with `source "$HOME/.cargo/env"`
+
+**2. Install native dependencies:**
 
 ```bash
-npm run dev
+# Linux / macOS / WSL
+./apps/desktop/script/setup
 ```
 
-- React app runs on [http://localhost:5123](http://localhost:5123)
-- Electron loads the local dev server for live reload
+```powershell
+# Windows
+powershell -ExecutionPolicy Bypass -File .\apps\desktop\script\setup.ps1
+```
 
-### Linting
-
-Run ESLint to check code quality:
+**3. Run:**
 
 ```bash
-npm run lint
+cargo run -p opencut-desktop
 ```
 
-### Building for Production
+## Platform notes
 
-Build both the React frontend and Electron main process:
+**Linux:** supports apt (Debian/Ubuntu/Mint), dnf (Fedora/RHEL), and pacman (Arch).
 
-```bash
-npm run build
-```
+**macOS:** installs Xcode Command Line Tools if missing.
 
-### Packaging
+**Windows:** the setup script checks for Visual Studio Build Tools. If missing, it prints the install link.
 
-Create distributable binaries for your platform:
-
-- **Windows**:  
-  `npm run dist:win`
-- **macOS**:  
-  `npm run dist:mac`
-- **Linux**:  
-  `npm run dist:linux`
-
-Output files are placed in the `dist-electron` and `dist-react` folders.
-
----
-
-## Project Structure
-
-```
-├── src/
-│   ├── electron/      # Electron main process (TypeScript)
-│   │   ├── main.ts
-│   │   └── util.ts
-│   └── ui/            # React renderer process (TypeScript)
-│       ├── App.tsx
-│       ├── main.tsx
-│       └── assets/
-├── dist-electron/     # Compiled Electron main process
-├── dist-react/        # Built React app (renderer)
-├── electron-builder.json
-├── package.json
-├── tsconfig*.json
-└── vite.config.ts
-```
-
----
-
-## Scripts
-
-| Script       | Description                                  |
-| ------------ | -------------------------------------------- |
-| `dev`        | Start React and Electron in development mode |
-| `build`      | Build both Electron and React for production |
-| `lint`       | Run ESLint on the codebase                   |
-| `preview`    | Preview the production React build           |
-| `dist:win`   | Package app for Windows                      |
-| `dist:mac`   | Package app for macOS                        |
-| `dist:linux` | Package app for Linux                        |
-
----
-
-## Configuration
-
-- **Electron entry**: `dist-electron/main.js`
-- **React build output**: `dist-react/`
-- **Icons**: Set in `electron-builder.json` (`desktopIcon.png`)
-- **Port**: React dev server runs on `5123` (see `vite.config.ts`)
-
----
-
-## Customization
-
-- Update the Electron main process in `src/electron/main.ts`
-- Modify the React UI in `src/ui/`
-- Adjust build targets and packaging in `electron-builder.json`
-- Extend ESLint rules in `eslint.config.js`
-
----
-
-## License
-
-This project is private and not intended for public distribution.
-
----
-
-## Credits
-
-- [Electron](https://www.electronjs.org/)
-- [React](https://react.dev/)
-- [Vite](https://vitejs.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [electron-builder](https://www.electron.build/)
+**WSL:** runs the same scripts as Linux. Window rendering works via WSLg on Windows 11 and Windows 10 22H2+. If you're on an older build, test on the host instead.

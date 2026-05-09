@@ -1,20 +1,50 @@
 {
-  "name": "openscript",
-  "version": "0.1.0",
-  "private": true,
+  "name": "opencut",
+  "packageManager": "bun@1.2.18",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "cd apps/website && bun dev",
-    "build": "cd apps/website && bun build",
-    "start": "cd apps/website && bun start",
-    "lint": "cd apps/website && bun lint"
+    "build:tools": "turbo run build --filter=@opencut/tools",
+    "build:wasm": "wasm-pack build rust/wasm --target bundler --out-dir pkg",
+    "build:web": "turbo run build --filter=@opencut/web",
+    "deploy:web": "turbo run deploy --filter=@opencut/web",
+    "dev:tools": "turbo run dev --filter=@opencut/tools",
+    "dev:wasm": "cargo watch -w rust/crates -w rust/wasm/src -s 'wasm-pack build rust/wasm --target bundler --out-dir pkg'",
+    "dev:web": "turbo run dev --filter=@opencut/web",
+    "format:web": "prettier apps/web/src/services/renderer --write",
+    "generate:fonts": "npx tsx apps/web/scripts/generate-font-sprites.ts",
+    "lint:web": "eslint apps/web/src --ext .ts,.tsx",
+    "lint:web:fix": "eslint apps/web/src --ext .ts,.tsx --fix",
+    "preview:web": "turbo run preview --filter=@opencut/web",
+    "publish:wasm": "bun run build:wasm && npm publish rust/wasm/pkg --access public",
+    "start:tools": "turbo run start --filter=@opencut/tools",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "better-auth": "^1.4.15",
+    "next": "^16.1.3",
+    "opencut": ".",
+    "opencut-wasm": "^0.2.10"
   },
   "devDependencies": {
-    "@types/electron": "^1.6.12",
-    "@types/node": "^25.0.3",
-    "bun-types": "latest"
-  }
+    "@eslint/js": "^9.39.4",
+    "@next/eslint-plugin-next": "^16.2.4",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.5.0",
+    "prettier": "^3.8.3",
+    "turbo": "^2.8.20",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.59.0"
+  },
+  "trustedDependencies": [
+    "@tailwindcss/oxide"
+  ]
 }

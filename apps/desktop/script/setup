@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+# Installs the native system libraries GPUI needs to compile on Linux/macOS.
+# Run script/setup-rust first if you don't have Rust installed yet.
+
+set -euo pipefail
+
+if [ "$(id -u)" -eq 0 ]; then
+  maysudo=''
+else
+  maysudo="$(command -v sudo || command -v doas || true)"
+fi
+
+# Ubuntu, Debian, Mint, Pop!_OS, Kali, Raspbian, etc.
+apt=$(command -v apt-get || true)
+if [[ -n $apt ]]; then
+  deps=(
+    curl
+    build-essential
+    pkg-config
+    gcc
+    g++
+    make
+    libasound2-dev
+    libfontconfig-dev
+    libglib2.0-dev
+    libssl-dev
+    libva-dev
+    libvulkan1
+    libwayland-dev
+    libx11-xcb-dev
+    libxkbcommon-x11-dev
+    libzstd-dev
+    libsqlite3-dev
+  )
+
+  $maysudo "$apt" update
+  $maysudo "$apt" install -y "${deps[@]}"
+  echo "Desktop native dependencies installed."
+  exit 0
+fi
+
+# Fedora, RHEL, CentOS, Alma, etc.
+dnf=$(command -v dnf || true)
+if [[ -n $dnf ]]; then
+  deps=(
+    gcc
+    gcc-c++
+    make
+    pkg-config
+    alsa-lib-devel
+    fontconfig-devel
+    glib2-devel
+    openssl-devel
+    libva-devel
+    vulkan-loader
+    wayland-devel
+    libxcb-devel
+    libxkbcommon-x11-devel
+    libzstd-devel
+    sqlite-devel
+    curl
+  )
+
+  $maysudo "$dnf" install -y "${deps[@]}"
+  echo "Desktop native dependencies installed."
+  exit 0
+fi
+
+# Arch, Manjaro, etc.
+pacman=$(command -v pacman || true)
+if [[ -n $pacman ]]; then
+  deps=(
+    gcc
+    make
+    pkgconf
+    alsa-lib
+    fontconfig
+    glib2
+    openssl
+    libva
+    vulkan-loader
+    wayland
+    libxcb
+    libxkbcommon-x11
+    zstd
+    sqlite
+    curl
+  )
+
+  $maysudo "$pacman" -Syu --needed --noconfirm "${deps[@]}"
+  echo "Desktop native dependencies installed."
+  exit 0
+fi
+
+# macOS
+if [[ "$(uname)" == "Darwin" ]]; then
+  if ! xcode-select -p &> /dev/null; then
+    echo "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    echo "Re-run this script after the Xcode install completes."
+    exit 0
+  fi
+
+  echo "Desktop native dependencies installed."
+  exit 0
+fi
+
+echo "Unsupported platform. See apps/desktop/README.md for manual setup instructions."
+exit 1

@@ -1,0 +1,31 @@
+[package]
+name = "opencut-wasm"
+version = "0.2.10"
+edition = "2024"
+description = "Shared video editor logic compiled to WebAssembly"
+repository = "https://github.com/opencut/opencut"
+license = "MIT"
+
+[lib]
+path = "src/wasm.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+bridge = { version = "0.1.0", path = "../crates/bridge" }
+compositor = { version = "0.1.0", path = "../crates/compositor" }
+console_error_panic_hook = "0.1.7"
+effects = { version = "0.1.0", path = "../crates/effects" }
+gpu = { version = "0.1.0", path = "../crates/gpu", features = ["wasm"] }
+js-sys = "0.3.93"
+masks = { version = "0.1.0", path = "../crates/masks" }
+num-traits = "0.2.19"
+serde = { version = "1.0.228", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
+time = { version = "0.1.0", path = "../crates/time", features = ["wasm"] }
+wasm-bindgen = "0.2.116"
+wasm-bindgen-futures = "0.4.66"
+web-sys = { version = "0.3.93", features = ["OffscreenCanvas", "HtmlCanvasElement", "CanvasRenderingContext2d", "Document", "Window", "Performance"] }
+
+[features]
+default = ["wasm"]
+wasm = []

@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = [
+    "apps/desktop",
+    "rust/crates/time",
+    "rust/crates/bridge",
+    "rust/crates/effects",
+    "rust/crates/gpu",
+    "rust/crates/masks",
+    "rust/wasm", "rust/crates/compositor",
+]

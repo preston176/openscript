@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Installs the Rust toolchain via rustup.
+# Run this before any platform-specific setup script.
+
+set -euo pipefail
+
+CARGO_BIN="$HOME/.cargo/bin/rustup"
+
+if command -v rustup &> /dev/null || [ -f "$CARGO_BIN" ]; then
+  echo "rustup already installed"
+  exit 0
+fi
+
+echo "Installing rustup..."
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source "$HOME/.cargo/env"
+
+echo "Installing wasm-pack..."
+cargo install wasm-pack
+echo "Done. Rust toolchain ready."
