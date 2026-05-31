@@ -343,10 +343,11 @@ describe("mask snapping", () => {
 	});
 
 	test("snaps uniform scale handle for box masks", () => {
-		// bounds.width=200 → localCanvasSize.width/2=100 is the right snap target.
+		// bounds.width=200 → localCanvasSize.width/2=100 is the snap target.
 		// width=0.4, scale=1 → aabbHalfW = (0.4*200)/2 * 1 = 40.
 		// At scale=2.48 → rightEdge=0+40*2.48=99.2; |99.2-100|=0.8 < threshold(8)
-		// → snaps to scale=1*(100/40)=2.5; line at position 100.
+		// → snaps to scale=1*(100/40)=2.5. The mask is centered, so the left
+		// edge reaches -100 at the same scale; both vertical guides light up.
 		const result = snapBoxMaskInteraction({
 			handleId: { kind: "scale" },
 			startParams: buildRectangleParams({ scale: 1 }),
@@ -357,10 +358,18 @@ describe("mask snapping", () => {
 		});
 
 		expect(result.params.scale).toBe(2.5);
-		expect(result.activeLines).toEqual([{ type: "vertical", position: 100 }]);
+		expect(result.activeLines).toEqual([
+			{ type: "vertical", position: -100 },
+			{ type: "vertical", position: 100 },
+		]);
 	});
 
-	test("snaps text mask movement using intrinsic text bounds", () => {
+	// Skipped outside a DOM/canvas environment (e.g. `bun test`): measuring a
+	// text mask's intrinsic bounds requires a 2D canvas context, and the snap
+	// target depends on the browser's font metrics. Runs in a browser/jsdom.
+	test.skipIf(
+		typeof OffscreenCanvas === "undefined" && typeof document === "undefined",
+	)("snaps text mask movement using intrinsic text bounds", () => {
 		const params = buildTextMaskParams({
 			centerX: 0.03,
 			centerY: -0.04,
@@ -495,13 +504,16 @@ describe("custom mask point insertion", () => {
 		});
 
 		expect(nextPoints.map((point) => point.id)).toEqual(["a", "new", "b", "c"]);
+		// De Casteljau subdivision of the straight a→b segment at t=0.5: the new
+		// point sits at (0, -0.1) with collinear handles (-0.1 in, +0.1 out) that
+		// keep the segment straight.
 		expect(nextPoints[1]).toMatchObject({
 			id: "new",
 			x: 0,
 			y: -0.1,
-			inX: 0,
+			inX: -0.1,
 			inY: 0,
-			outX: 0,
+			outX: 0.1,
 			outY: 0,
 		});
 	});

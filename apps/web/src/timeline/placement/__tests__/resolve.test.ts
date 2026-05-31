@@ -575,8 +575,8 @@ describe("resolveTrackPlacement", () => {
 				tracks,
 				elementType: "audio",
 				timeSpans: [
-					buildTimeSpan({ startTime: 2.5, duration: 1 }),
-					buildTimeSpan({ startTime: 5.5, duration: 1 }),
+					buildTimeSpan({ startTime: 2, duration: 1 }),
+					buildTimeSpan({ startTime: 5, duration: 1 }),
 				],
 				strategy: { type: "firstAvailable" },
 			}),
