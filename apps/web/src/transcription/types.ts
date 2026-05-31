@@ -45,6 +45,12 @@ export interface TranscriptionModel {
 	name: string;
 	huggingFaceId: string;
 	description: string;
+	/**
+	 * Approximate first-use download size of the q4-quantized weights, in MB.
+	 * Shown in the UI so users on slow/metered connections can pick a smaller
+	 * model. Rough — actual size depends on the served quantization.
+	 */
+	approxDownloadMb: number;
 }
 
 export interface CaptionChunk {

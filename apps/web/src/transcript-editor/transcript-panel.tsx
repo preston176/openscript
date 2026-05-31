@@ -9,6 +9,13 @@ import {
 } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { useEditor } from "@/editor/use-editor";
 import { extractTimelineAudio } from "@/media/mediabunny";
@@ -16,7 +23,16 @@ import { decodeAudioToFloat32 } from "@/media/audio";
 import { transcriptionService } from "@/services/transcription/service";
 import { storageService } from "@/services/storage/service";
 import { DEFAULT_TRANSCRIPTION_SAMPLE_RATE } from "@/transcription/audio";
-import type { TranscriptionProgress } from "@/transcription/types";
+import { LANGUAGES } from "@/transcription/languages";
+import {
+	DEFAULT_TRANSCRIPTION_MODEL,
+	TRANSCRIPTION_MODELS,
+} from "@/transcription/models";
+import type {
+	TranscriptionLanguage,
+	TranscriptionModelId,
+	TranscriptionProgress,
+} from "@/transcription/types";
 import { cn } from "@/utils/ui";
 import { mediaTimeFromSeconds, mediaTimeToSeconds } from "@/wasm";
 import {
@@ -43,11 +59,17 @@ export function TranscriptPanel() {
 	);
 	const [doc, setDoc] = useState<TranscriptDocument | null>(null);
 	const [status, setStatus] = useState<Status>({ kind: "idle" });
+	const [modelId, setModelId] = useState<TranscriptionModelId>(
+		DEFAULT_TRANSCRIPTION_MODEL,
+	);
+	const [language, setLanguage] = useState<TranscriptionLanguage>("auto");
 	const [selection, setSelection] = useState<Set<string>>(new Set());
 	const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [activeMatchIdx, setActiveMatchIdx] = useState(0);
+	const [editingWordId, setEditingWordId] = useState<string | null>(null);
+	const [editingText, setEditingText] = useState("");
 	const searchInputRef = useRef<HTMLInputElement>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -79,6 +101,8 @@ export function TranscriptPanel() {
 			});
 			const result = await transcriptionService.transcribe({
 				audioData: samples,
+				modelId,
+				language,
 				onProgress,
 			});
 			const document = buildTranscriptDocument({ segments: result.segments });
@@ -106,7 +130,7 @@ export function TranscriptPanel() {
 					error instanceof Error ? error.message : "Transcription failed",
 			});
 		}
-	}, [editor, onProgress]);
+	}, [editor, onProgress, modelId, language]);
 
 	// Rehydrate a previously-generated transcript for this project on mount. The
 	// panel is conditionally mounted (tab toggle) with component-local state, so
@@ -202,13 +226,44 @@ export function TranscriptPanel() {
 		[lastSelectedId, selectRange, toggleWord, seekToWord],
 	);
 
-	const handleWordDoubleClick = useCallback(
-		(word: TranscriptWord) => {
-			toggleWord(word.id);
-			setLastSelectedId(word.id);
-		},
-		[toggleWord],
-	);
+	// Double-click a word to correct its text. This is a transcript-only edit:
+	// it changes the displayed/exported text, not the timeline or word timing.
+	const handleWordDoubleClick = useCallback((word: TranscriptWord) => {
+		setEditingWordId(word.id);
+		setEditingText(word.text);
+		setLastSelectedId(word.id);
+	}, []);
+
+	const cancelWordEdit = useCallback(() => {
+		setEditingWordId(null);
+	}, []);
+
+	const commitWordEdit = useCallback(() => {
+		if (editingWordId === null) return;
+		if (!doc) {
+			setEditingWordId(null);
+			return;
+		}
+		const targetId = editingWordId;
+		const nextText = editingText;
+		const next: TranscriptDocument = {
+			segments: doc.segments.map((segment) => ({
+				...segment,
+				words: segment.words.map((word) =>
+					word.id === targetId ? { ...word, text: nextText } : word,
+				),
+			})),
+		};
+		setDoc(next);
+		setEditingWordId(null);
+		const projectId = editor.project.getActiveOrNull()?.metadata.id;
+		if (projectId) {
+			void storageService.saveTranscript({
+				projectId,
+				transcript: { version: 1, document: next },
+			});
+		}
+	}, [editingWordId, editingText, doc, editor]);
 
 	const fillerWordIds = useMemo(() => {
 		if (!doc) return new Set<string>();
@@ -437,7 +492,13 @@ export function TranscriptPanel() {
 			<ScrollArea className="flex-1">
 				<div ref={scrollContainerRef} className="px-6 py-6 max-w-prose mx-auto">
 					{status.kind === "idle" && !doc && (
-						<EmptyState onGenerate={generate} />
+						<EmptyState
+							modelId={modelId}
+							onModelChange={setModelId}
+							language={language}
+							onLanguageChange={setLanguage}
+							onGenerate={generate}
+						/>
 					)}
 					{status.kind === "working" && (
 						<div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -462,6 +523,11 @@ export function TranscriptPanel() {
 							fillerWordIds={fillerWordIds}
 							searchMatchedWordIds={searchMatchedWordIds}
 							activeMatchWordIds={activeMatchWordIds}
+							editingWordId={editingWordId}
+							editingText={editingText}
+							onEditingTextChange={setEditingText}
+							onCommitEdit={commitWordEdit}
+							onCancelEdit={cancelWordEdit}
 							onWordClick={handleWordClick}
 							onWordDoubleClick={handleWordDoubleClick}
 						/>
@@ -472,17 +538,85 @@ export function TranscriptPanel() {
 	);
 }
 
-function EmptyState({ onGenerate }: { onGenerate: () => void }) {
+function EmptyState({
+	modelId,
+	onModelChange,
+	language,
+	onLanguageChange,
+	onGenerate,
+}: {
+	modelId: TranscriptionModelId;
+	onModelChange: (modelId: TranscriptionModelId) => void;
+	language: TranscriptionLanguage;
+	onLanguageChange: (language: TranscriptionLanguage) => void;
+	onGenerate: () => void;
+}) {
+	const selectedModel = TRANSCRIPTION_MODELS.find((m) => m.id === modelId);
 	return (
 		<div className="flex flex-col items-center justify-center text-center gap-3 py-8">
 			<p className="text-sm text-muted-foreground max-w-xs">
 				Transcribe the timeline audio so you can edit the video by editing the
-				text. Click a word to seek; shift-click to select a range; Cmd+F to
-				find.
+				text. Click a word to seek; shift-click to select a range; double-click
+				to edit a word; Cmd+F to find.
 			</p>
+			<div className="flex w-full max-w-xs flex-col gap-2 text-left">
+				<label className="text-xs text-muted-foreground">
+					Model
+					<Select
+						value={modelId}
+						onValueChange={(value) => {
+							const model = TRANSCRIPTION_MODELS.find((m) => m.id === value);
+							if (model) onModelChange(model.id);
+						}}
+					>
+						<SelectTrigger className="mt-1 w-full">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							{TRANSCRIPTION_MODELS.map((model) => (
+								<SelectItem key={model.id} value={model.id}>
+									{model.name} — {model.description} (~{model.approxDownloadMb} MB)
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</label>
+				<label className="text-xs text-muted-foreground">
+					Language
+					<Select
+						value={language}
+						onValueChange={(value) => {
+							if (value === "auto") {
+								onLanguageChange("auto");
+								return;
+							}
+							const lang = LANGUAGES.find((l) => l.code === value);
+							if (lang) onLanguageChange(lang.code);
+						}}
+					>
+						<SelectTrigger className="mt-1 w-full">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="auto">Auto-detect</SelectItem>
+							{LANGUAGES.map((lang) => (
+								<SelectItem key={lang.code} value={lang.code}>
+									{lang.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</label>
+			</div>
 			<Button size="sm" onClick={onGenerate}>
 				Generate transcript
 			</Button>
+			{selectedModel && (
+				<p className="max-w-xs text-xs text-muted-foreground/70">
+					Runs locally in your browser. First use downloads the{" "}
+					{selectedModel.name} model (~{selectedModel.approxDownloadMb} MB).
+				</p>
+			)}
 		</div>
 	);
 }
@@ -502,6 +636,11 @@ function TranscriptView({
 	fillerWordIds,
 	searchMatchedWordIds,
 	activeMatchWordIds,
+	editingWordId,
+	editingText,
+	onEditingTextChange,
+	onCommitEdit,
+	onCancelEdit,
 	onWordClick,
 	onWordDoubleClick,
 }: {
@@ -512,6 +651,11 @@ function TranscriptView({
 	fillerWordIds: Set<string>;
 	searchMatchedWordIds: Set<string>;
 	activeMatchWordIds: Set<string>;
+	editingWordId: string | null;
+	editingText: string;
+	onEditingTextChange: (text: string) => void;
+	onCommitEdit: () => void;
+	onCancelEdit: () => void;
 	onWordClick: (word: TranscriptWord, event: React.MouseEvent) => void;
 	onWordDoubleClick: (word: TranscriptWord) => void;
 }) {
@@ -524,6 +668,39 @@ function TranscriptView({
 					</div>
 					<p>
 						{segment.words.map((word) => {
+							if (word.id === editingWordId) {
+								return (
+									<input
+										key={word.id}
+										data-word-id={word.id}
+										value={editingText}
+										onChange={(event) =>
+											onEditingTextChange(event.target.value)
+										}
+										onKeyDown={(event) => {
+											if (event.key === "Enter") {
+												event.preventDefault();
+												onCommitEdit();
+											} else if (event.key === "Escape") {
+												event.preventDefault();
+												onCancelEdit();
+											}
+										}}
+										onBlur={onCommitEdit}
+										ref={(el) => {
+											if (el && document.activeElement !== el) {
+												el.focus();
+												el.select();
+											}
+										}}
+										className="inline rounded-sm bg-muted px-1 outline-none ring-1 ring-ring"
+										style={{
+											width: `${Math.max(2, editingText.length + 1)}ch`,
+										}}
+										aria-label="Edit word"
+									/>
+								);
+							}
 							const isDeleted = deletedWordIds.has(word.id);
 							const isSelected = selection.has(word.id);
 							const isActive = activeWordId === word.id;
