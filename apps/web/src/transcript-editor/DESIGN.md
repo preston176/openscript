@@ -58,6 +58,22 @@ replays `afterTracks`/`afterDoc` (no ripple recompute). RESTORE = `rippleOpenEle
 9. Persistence v1→v2 migrator (derive deleted once; deletedRanges=[]; no timeline mutation). (pure migrate test)
 10. Retire coverage from hot path (keep for migrator only); confirm filler/search still pass.
 
+## Test-infra notes (for steps 6-7)
+
+- `EditorCore.getInstance()` DOES construct under `bun test` (with the wasm preload) —
+  confirmed by probe. So an integration test on a real editor is feasible.
+- BUT: `editor.timeline.updateTracks(...)` triggers the SaveManager → `storageService` →
+  IndexedDB, which is absent under bun and will reject (risking an "unhandled error
+  between tests"). The fidelity test must avoid that: either (a) extract the split/trim +
+  ripple-close/open transform into a PURE `tracks -> {afterTracks, removed}` helper and
+  test it directly on fixture `SceneTracks` (no editor/save), or (b) stub/disable the save
+  path in the test. Prefer (a): keep the destructive transform pure and editor-agnostic;
+  the TranscriptEditCommand is then a thin snapshot wrapper (mirror TracksSnapshotCommand)
+  that calls the pure transform + `store.setDoc`. Reuse SplitElementsCommand's trim math by
+  extracting its core if it is not already pure.
+- Delete input contract: panel passes contiguous runs `{ wordIds, startSeconds, endSeconds }`
+  (one DeletedRange per run); panel builds runs from consecutive selected words (step 8).
+
 ## Risks / limitations
 
 Direct timeline edits drift the mapping (documented; identity-seek fallback). Reconstruction
