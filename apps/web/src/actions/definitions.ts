@@ -152,6 +152,33 @@ export const ACTIONS = {
 
 export type TAction = keyof typeof ACTIONS;
 
+/** Actions that require arguments and therefore cannot be bound to a bare shortcut. */
+type TActionWithRequiredArgs = Exclude<TAction, TActionWithOptionalArgs>;
+
+// Exhaustive by construction: `satisfies Record<TActionWithRequiredArgs, true>`
+// makes TypeScript error here if a new required-args action is added to
+// `TActionArgsMap`, so the runtime guard can never silently fall out of sync.
+const ACTIONS_WITH_REQUIRED_ARGS = {
+	"remove-media-asset": true,
+	"remove-media-assets": true,
+} as const satisfies Record<TActionWithRequiredArgs, true>;
+
+/** Runtime guard: is `value` one of the known action identifiers? */
+export function isAction(value: string): value is TAction {
+	return Object.hasOwn(ACTIONS, value);
+}
+
+/**
+ * Runtime guard: is `value` an action that can be bound to a keybinding, i.e.
+ * a known action that does not require arguments? Mirrors the
+ * `TActionWithOptionalArgs` type exactly.
+ */
+export function isActionWithOptionalArgs(
+	value: string,
+): value is TActionWithOptionalArgs {
+	return isAction(value) && !Object.hasOwn(ACTIONS_WITH_REQUIRED_ARGS, value);
+}
+
 const ACTION_DEFAULT_SHORTCUTS = [
 	["toggle-play", ["space", "k"]],
 	["seek-forward", ["l"]],
