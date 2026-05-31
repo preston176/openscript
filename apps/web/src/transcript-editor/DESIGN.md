@@ -74,6 +74,39 @@ replays `afterTracks`/`afterDoc` (no ripple recompute). RESTORE = `rippleOpenEle
 - Delete input contract: panel passes contiguous runs `{ wordIds, startSeconds, endSeconds }`
   (one DeletedRange per run); panel builds runs from consecutive selected words (step 8).
 
+## Step 8 — panel wiring (the only remaining piece; needs in-app verification)
+
+All backend is built + tested (transforms, plan.ts, transcript-edit-command.ts, migrate.ts).
+The panel (transcript-panel.tsx) is the last integration. Exact deltas:
+
+- doc source: replace `const [doc, setDoc] = useState` with `const doc = useEditor(e =>
+  e.transcript.getDoc())`; every `setDoc(x)` becomes `editor.transcript.setDoc(x)`. Remove
+  the `activeTracks` selector and the `isWordPresentInTimeline` import.
+- deletedWordIds: `new Set(flatWords.filter(w => w.deleted).map(w => w.id))` (stored, not coverage).
+- generate(): `editor.transcript.setDoc(document)` (store persists v2); drop the manual
+  saveTranscript call.
+- mount load: `storageService.loadTranscript` → `migrateTranscript({ stored, tracks:
+  editor.scenes.getActiveSceneOrNull()?.tracks ?? null })` → `editor.transcript.setDoc(migrated)`.
+  Skip if the store already has a doc.
+- seek + active word via mapping.ts: seek `editor.playback.seek({ time: sourceToTimeline({
+  sourceSeconds: word.start, deletedRanges: doc.deletedRanges }) })`; active word from
+  `buildWordTimeline(doc)` comparing `currentTimeTicks` to each word's [tStart,tEnd).
+- delete: build contiguous runs from selected non-deleted words (group by consecutive
+  flatWords index → `{ wordIds, startSeconds: first.start, endSeconds: last.end }`) and call
+  `dispatchTranscriptEdit({ editor, edit: { kind: "delete", runs } })`. Same for filler runs.
+- restore: clicking a struck word finds the DeletedRange containing it (with
+  `removed.length > 0`) and calls `dispatchTranscriptEdit({ editor, edit: { kind: "restore",
+  rangeId } })`. In TranscriptView, make struck words clickable (drop `disabled={isDeleted}`)
+  with a "click to restore" affordance; pre-v2 cuts (no owning range) stay non-restorable.
+- text edit (commitWordEdit): `editor.transcript.setDoc(next)`; keep outside the undo stack.
+
+In-app checklist (the part autonomous testing can't cover): generate a transcript on a
+clip; select a sentence → Delete → the words strike through AND the timeline ripples
+(gap closes, later content shifts left); play → the active-word highlight tracks correctly
+post-cut; click a struck word → media returns and words un-strike; Cmd+Z → both timeline
+and transcript revert in one step; reload → transcript + cuts persist; export → deleted
+audio is gone.
+
 ## Risks / limitations
 
 Direct timeline edits drift the mapping (documented; identity-seek fallback). Reconstruction
