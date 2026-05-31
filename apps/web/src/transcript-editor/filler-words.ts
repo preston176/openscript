@@ -46,13 +46,15 @@ function normalize(text: string): string {
  */
 export function findFillerWords({
 	doc,
+	deletedWordIds,
 }: {
 	doc: TranscriptDocument;
+	deletedWordIds: ReadonlySet<string>;
 }): Set<string> {
 	const allWords: TranscriptWord[] = [];
 	for (const segment of doc.segments) {
 		for (const word of segment.words) {
-			if (!word.deleted) allWords.push(word);
+			if (!deletedWordIds.has(word.id)) allWords.push(word);
 		}
 	}
 

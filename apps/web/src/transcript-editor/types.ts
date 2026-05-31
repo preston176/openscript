@@ -5,7 +5,6 @@ export interface TranscriptWord {
 	text: string;
 	start: number;
 	end: number;
-	deleted: boolean;
 }
 
 export interface TranscriptSegment {
@@ -33,7 +32,6 @@ export function buildTranscriptDocument({
 			text: word.text,
 			start: word.start,
 			end: word.end,
-			deleted: false,
 		}));
 		result.push({
 			id: `s${s}`,

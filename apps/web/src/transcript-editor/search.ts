@@ -16,9 +16,11 @@ export interface SearchMatch {
 export function findMatches({
 	doc,
 	query,
+	deletedWordIds,
 }: {
 	doc: TranscriptDocument;
 	query: string;
+	deletedWordIds: ReadonlySet<string>;
 }): SearchMatch[] {
 	const trimmed = query.trim();
 	if (trimmed.length === 0) return [];
@@ -26,7 +28,7 @@ export function findMatches({
 	const words: TranscriptWord[] = [];
 	for (const segment of doc.segments) {
 		for (const word of segment.words) {
-			if (!word.deleted) words.push(word);
+			if (!deletedWordIds.has(word.id)) words.push(word);
 		}
 	}
 	if (words.length === 0) return [];

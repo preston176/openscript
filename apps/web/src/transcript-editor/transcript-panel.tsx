@@ -14,6 +14,7 @@ import { useEditor } from "@/editor/use-editor";
 import { extractTimelineAudio } from "@/media/mediabunny";
 import { decodeAudioToFloat32 } from "@/media/audio";
 import { transcriptionService } from "@/services/transcription/service";
+import { storageService } from "@/services/storage/service";
 import { DEFAULT_TRANSCRIPTION_SAMPLE_RATE } from "@/transcription/audio";
 import type { TranscriptionProgress } from "@/transcription/types";
 import { cn } from "@/utils/ui";
@@ -24,6 +25,7 @@ import {
 	type TranscriptWord,
 } from "./types";
 import { applyTranscriptDeletions, type WordRange } from "./apply-deletion";
+import { isWordPresentInTimeline } from "./coverage";
 import { findFillerWords } from "./filler-words";
 import { findMatches, type SearchMatch } from "./search";
 
@@ -36,6 +38,9 @@ type Status =
 export function TranscriptPanel() {
 	const editor = useEditor();
 	const currentTimeTicks = useEditor((e) => e.playback.getCurrentTime());
+	const activeTracks = useEditor(
+		(e) => e.scenes.getActiveSceneOrNull()?.tracks ?? null,
+	);
 	const [doc, setDoc] = useState<TranscriptDocument | null>(null);
 	const [status, setStatus] = useState<Status>({ kind: "idle" });
 	const [selection, setSelection] = useState<Set<string>>(new Set());
@@ -87,6 +92,13 @@ export function TranscriptPanel() {
 			}
 			setDoc(document);
 			setStatus({ kind: "ready" });
+			const projectId = editor.project.getActiveOrNull()?.metadata.id;
+			if (projectId) {
+				void storageService.saveTranscript({
+					projectId,
+					transcript: { version: 1, document },
+				});
+			}
 		} catch (error) {
 			setStatus({
 				kind: "error",
@@ -96,10 +108,44 @@ export function TranscriptPanel() {
 		}
 	}, [editor, onProgress]);
 
+	// Rehydrate a previously-generated transcript for this project on mount. The
+	// panel is conditionally mounted (tab toggle) with component-local state, so
+	// without this the transcript would be lost on every remount/reload even
+	// though the timeline edits persist. Only text + timings are restored; the
+	// deleted state is re-derived from the loaded timeline coverage.
+	useEffect(() => {
+		const projectId = editor.project.getActiveOrNull()?.metadata.id;
+		if (!projectId) return;
+		let cancelled = false;
+		void storageService.loadTranscript({ projectId }).then((stored) => {
+			if (cancelled || !stored) return;
+			setDoc(stored.document);
+			setStatus({ kind: "ready" });
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [editor]);
+
 	const flatWords = useMemo(() => {
 		if (!doc) return [] as TranscriptWord[];
 		return doc.segments.flatMap((s) => s.words);
 	}, [doc]);
+
+	// A word is "deleted" when its media no longer covers it on the timeline —
+	// derived from the live tracks rather than stored, so it stays correct
+	// across undo/redo and reload (the cut media returning makes the word
+	// reappear automatically).
+	const deletedWordIds = useMemo(() => {
+		const ids = new Set<string>();
+		if (!activeTracks) return ids;
+		for (const word of flatWords) {
+			if (!isWordPresentInTimeline({ word, tracks: activeTracks })) {
+				ids.add(word.id);
+			}
+		}
+		return ids;
+	}, [flatWords, activeTracks]);
 
 	const seekToWord = useCallback(
 		(seconds: number) => {
@@ -119,12 +165,12 @@ export function TranscriptPanel() {
 			setSelection((prev) => {
 				const next = new Set(prev);
 				for (let i = lo; i <= hi; i++) {
-					if (!flatWords[i].deleted) next.add(flatWords[i].id);
+					if (!deletedWordIds.has(flatWords[i].id)) next.add(flatWords[i].id);
 				}
 				return next;
 			});
 		},
-		[doc, flatWords],
+		[doc, flatWords, deletedWordIds],
 	);
 
 	const toggleWord = useCallback((wordId: string) => {
@@ -166,13 +212,13 @@ export function TranscriptPanel() {
 
 	const fillerWordIds = useMemo(() => {
 		if (!doc) return new Set<string>();
-		return findFillerWords({ doc });
-	}, [doc]);
+		return findFillerWords({ doc, deletedWordIds });
+	}, [doc, deletedWordIds]);
 
 	const searchResults = useMemo<SearchMatch[]>(() => {
 		if (!doc || !searchOpen || searchQuery.trim().length === 0) return [];
-		return findMatches({ doc, query: searchQuery });
-	}, [doc, searchOpen, searchQuery]);
+		return findMatches({ doc, query: searchQuery, deletedWordIds });
+	}, [doc, searchOpen, searchQuery, deletedWordIds]);
 
 	const searchMatchedWordIds = useMemo(() => {
 		const ids = new Set<string>();
@@ -195,35 +241,28 @@ export function TranscriptPanel() {
 		if (!doc) return [];
 		const ranges: WordRange[] = [];
 		for (const word of flatWords) {
-			if (selection.has(word.id) && !word.deleted) {
+			if (selection.has(word.id) && !deletedWordIds.has(word.id)) {
 				ranges.push({ startSeconds: word.start, endSeconds: word.end });
 			}
 		}
 		return ranges;
-	}, [doc, flatWords, selection]);
+	}, [doc, flatWords, selection, deletedWordIds]);
 
 	const fillerRanges = useMemo<WordRange[]>(() => {
 		if (!doc) return [];
 		return flatWords
-			.filter((w) => fillerWordIds.has(w.id) && !w.deleted)
+			.filter((w) => fillerWordIds.has(w.id) && !deletedWordIds.has(w.id))
 			.map((w) => ({ startSeconds: w.start, endSeconds: w.end }));
-	}, [doc, flatWords, fillerWordIds]);
+	}, [doc, flatWords, fillerWordIds, deletedWordIds]);
 
 	const applyDeletion = useCallback(
-		(ranges: WordRange[], idsToMark: Set<string>) => {
+		(ranges: WordRange[]) => {
 			if (ranges.length === 0) return;
+			// Cut the ranges from the timeline. The struck-through state of the
+			// affected words is derived from timeline coverage (see deletedWordIds),
+			// so there is no separate document state to mutate here — and undo
+			// restores both the media and the words in one step.
 			applyTranscriptDeletions({ editor, ranges });
-			setDoc((prev) => {
-				if (!prev) return prev;
-				return {
-					segments: prev.segments.map((segment) => ({
-						...segment,
-						words: segment.words.map((word) =>
-							idsToMark.has(word.id) ? { ...word, deleted: true } : word,
-						),
-					})),
-				};
-			});
 			setSelection(new Set());
 			setLastSelectedId(null);
 		},
@@ -231,12 +270,12 @@ export function TranscriptPanel() {
 	);
 
 	const deleteSelected = useCallback(() => {
-		applyDeletion(selectedRanges, selection);
-	}, [applyDeletion, selectedRanges, selection]);
+		applyDeletion(selectedRanges);
+	}, [applyDeletion, selectedRanges]);
 
 	const removeFillers = useCallback(() => {
-		applyDeletion(fillerRanges, fillerWordIds);
-	}, [applyDeletion, fillerRanges, fillerWordIds]);
+		applyDeletion(fillerRanges);
+	}, [applyDeletion, fillerRanges]);
 
 	const jumpToMatch = useCallback(
 		(idx: number) => {
@@ -283,7 +322,7 @@ export function TranscriptPanel() {
 		if (!doc) return null;
 		for (const word of flatWords) {
 			if (
-				!word.deleted &&
+				!deletedWordIds.has(word.id) &&
 				currentTimeSeconds >= word.start &&
 				currentTimeSeconds < word.end
 			) {
@@ -291,7 +330,7 @@ export function TranscriptPanel() {
 			}
 		}
 		return null;
-	}, [doc, flatWords, currentTimeSeconds]);
+	}, [doc, flatWords, currentTimeSeconds, deletedWordIds]);
 
 	// Auto-scroll active word into view.
 	useEffect(() => {
@@ -418,6 +457,7 @@ export function TranscriptPanel() {
 						<TranscriptView
 							doc={doc}
 							selection={selection}
+							deletedWordIds={deletedWordIds}
 							activeWordId={activeWordId}
 							fillerWordIds={fillerWordIds}
 							searchMatchedWordIds={searchMatchedWordIds}
@@ -457,6 +497,7 @@ function formatTimestamp(seconds: number): string {
 function TranscriptView({
 	doc,
 	selection,
+	deletedWordIds,
 	activeWordId,
 	fillerWordIds,
 	searchMatchedWordIds,
@@ -466,6 +507,7 @@ function TranscriptView({
 }: {
 	doc: TranscriptDocument;
 	selection: Set<string>;
+	deletedWordIds: Set<string>;
 	activeWordId: string | null;
 	fillerWordIds: Set<string>;
 	searchMatchedWordIds: Set<string>;
@@ -482,6 +524,7 @@ function TranscriptView({
 					</div>
 					<p>
 						{segment.words.map((word) => {
+							const isDeleted = deletedWordIds.has(word.id);
 							const isSelected = selection.has(word.id);
 							const isActive = activeWordId === word.id;
 							const isFiller = fillerWordIds.has(word.id);
@@ -496,31 +539,31 @@ function TranscriptView({
 									onDoubleClick={() => onWordDoubleClick(word)}
 									className={cn(
 										"inline cursor-pointer rounded-sm transition-colors",
-										word.deleted &&
+										isDeleted &&
 											"line-through text-muted-foreground/40 cursor-not-allowed",
-										!word.deleted &&
+										!isDeleted &&
 											isActiveMatch &&
 											"bg-yellow-400/60 text-foreground",
-										!word.deleted &&
+										!isDeleted &&
 											isMatch &&
 											!isActiveMatch &&
 											"bg-yellow-300/30",
-										!word.deleted &&
+										!isDeleted &&
 											isSelected &&
 											!isMatch &&
 											"bg-destructive/30 text-destructive-foreground",
-										!word.deleted &&
+										!isDeleted &&
 											isActive &&
 											!isSelected &&
 											!isMatch &&
 											"bg-accent text-accent-foreground",
-										!word.deleted &&
+										!isDeleted &&
 											isFiller &&
 											!isSelected &&
 											!isActive &&
 											!isMatch &&
 											"underline decoration-amber-500/60 decoration-dotted underline-offset-2",
-										!word.deleted &&
+										!isDeleted &&
 											!isSelected &&
 											!isActive &&
 											!isMatch &&
@@ -528,7 +571,7 @@ function TranscriptView({
 											"hover:bg-accent/40",
 									)}
 									aria-pressed={isSelected}
-									disabled={word.deleted}
+									disabled={isDeleted}
 								>
 									{word.text}
 								</button>

@@ -15,6 +15,7 @@ import type {
 	StorageConfig,
 	SerializedProject,
 	SerializedScene,
+	SerializedTranscript,
 } from "./types";
 import type { SavedSoundsData, SavedSound, SoundEffect } from "@/sounds/types";
 import {
@@ -54,6 +55,7 @@ function normalizeBookmarks({ raw }: { raw: unknown }): Bookmark[] {
 class StorageService {
 	private projectsAdapter: IndexedDBAdapter<SerializedProject>;
 	private savedSoundsAdapter: IndexedDBAdapter<SavedSoundsData>;
+	private transcriptsAdapter: IndexedDBAdapter<SerializedTranscript>;
 	private config: StorageConfig;
 	private migrationsPromise: Promise<void> | null = null;
 
@@ -62,6 +64,7 @@ class StorageService {
 			projectsDb: "video-editor-projects",
 			mediaDb: "video-editor-media",
 			savedSoundsDb: "video-editor-saved-sounds",
+			transcriptsDb: "video-editor-transcripts",
 			version: 1,
 		};
 
@@ -74,6 +77,12 @@ class StorageService {
 		this.savedSoundsAdapter = new IndexedDBAdapter<SavedSoundsData>({
 			dbName: this.config.savedSoundsDb,
 			storeName: "saved-sounds",
+			version: this.config.version,
+		});
+
+		this.transcriptsAdapter = new IndexedDBAdapter<SerializedTranscript>({
+			dbName: this.config.transcriptsDb,
+			storeName: "transcripts",
 			version: this.config.version,
 		});
 	}
@@ -282,6 +291,38 @@ class StorageService {
 
 	async deleteProject({ id }: { id: string }): Promise<void> {
 		await this.projectsAdapter.remove(id);
+		await this.transcriptsAdapter.remove(id);
+	}
+
+	async saveTranscript({
+		projectId,
+		transcript,
+	}: {
+		projectId: string;
+		transcript: SerializedTranscript;
+	}): Promise<void> {
+		await this.transcriptsAdapter.set({ key: projectId, value: transcript });
+	}
+
+	async loadTranscript({
+		projectId,
+	}: {
+		projectId: string;
+	}): Promise<SerializedTranscript | null> {
+		try {
+			return await this.transcriptsAdapter.get(projectId);
+		} catch (error) {
+			console.warn("[storage] Failed to load transcript:", error);
+			return null;
+		}
+	}
+
+	async deleteTranscript({
+		projectId,
+	}: {
+		projectId: string;
+	}): Promise<void> {
+		await this.transcriptsAdapter.remove(projectId);
 	}
 
 	async saveMediaAsset({

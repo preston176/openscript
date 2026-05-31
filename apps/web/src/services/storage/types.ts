@@ -5,6 +5,7 @@ import type {
 	TTimelineViewState,
 } from "@/project/types";
 import type { TScene } from "@/timeline";
+import type { TranscriptDocument } from "@/transcript-editor/types";
 
 export interface StorageAdapter<T> {
 	get(key: string): Promise<T | null>;
@@ -52,7 +53,19 @@ export interface StorageConfig {
 	projectsDb: string;
 	mediaDb: string;
 	savedSoundsDb: string;
+	transcriptsDb: string;
 	version: number;
+}
+
+/**
+ * Persisted transcript for a project. Only the transcription result (text +
+ * word timings) is stored; the per-word deleted state is NOT — it is derived
+ * from the (separately persisted) timeline coverage on load, so the transcript
+ * and the actual media can never drift out of sync.
+ */
+export interface SerializedTranscript {
+	version: 1;
+	document: TranscriptDocument;
 }
 
 // TypeScript type augmentation to add async iterator methods to FileSystemDirectoryHandle

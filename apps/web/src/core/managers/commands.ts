@@ -48,6 +48,18 @@ export class CommandManager {
 		this.reactors.push(reactor);
 	}
 
+	/**
+	 * Run reactors for a change whose effects were applied OUTSIDE
+	 * `execute()`/`redo()` — e.g. a command recorded via `push()` after its
+	 * sub-commands were executed incrementally (transcript deletions read live
+	 * element IDs between splits, so they cannot defer to `execute()`). Without
+	 * this, reactor-driven cleanup such as empty-track pruning never fires for
+	 * pushed commands.
+	 */
+	reactToExternalChange(): void {
+		this.runReactors();
+	}
+
 	undo(): void {
 		if (this.history.length === 0) return;
 		const entry = this.history.pop();

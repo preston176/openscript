@@ -58,6 +58,11 @@ export function applyTranscriptDeletions({
 
 	const batch = new BatchCommand(executed);
 	editor.command.push({ command: batch });
+	// Sub-commands were executed incrementally above (to read live element IDs
+	// between splits), so this uses push() rather than execute(). push() does
+	// not run reactors, so trigger them now — otherwise a transcript delete that
+	// empties an audio/overlay track leaves an orphan empty track behind.
+	editor.command.reactToExternalChange();
 }
 
 function mergeRanges({ ranges }: { ranges: WordRange[] }): WordRange[] {
