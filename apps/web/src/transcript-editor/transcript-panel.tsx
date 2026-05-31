@@ -247,6 +247,7 @@ export function TranscriptPanel() {
 		const targetId = editingWordId;
 		const nextText = editingText;
 		const next: TranscriptDocument = {
+			...doc,
 			segments: doc.segments.map((segment) => ({
 				...segment,
 				words: segment.words.map((word) =>

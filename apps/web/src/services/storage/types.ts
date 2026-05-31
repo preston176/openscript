@@ -64,7 +64,8 @@ export interface StorageConfig {
  * and the actual media can never drift out of sync.
  */
 export interface SerializedTranscript {
-	version: 1;
+	/** Schema version. 1 = pre-Descript (no deletedRanges/deleted). 2 = current. */
+	version: number;
 	document: TranscriptDocument;
 }
 
