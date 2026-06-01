@@ -29,7 +29,7 @@ export function timelineCoversTime({
 
 /**
  * A transcript word is "present" in the edit when its midpoint time is still
- * covered by media on the timeline. `applyTranscriptDeletions` removes the
+ * covered by media on the timeline. A pre-Descript (v1) deletion removed the
  * covering elements across the word's range, so its midpoint becomes uncovered
  * and the word reads as deleted.
  *
