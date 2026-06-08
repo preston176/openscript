@@ -2,7 +2,13 @@
 
 The native desktop app, built with [GPUI](https://gpui.rs).
 
+> **Status: early scaffold.** This currently opens an empty GPUI window and is
+> not yet wired to the editor or the shared `rust/` crates. The product today is
+> the web editor (`apps/web`). Treat this as a starting point, not a working app.
+
 ## Getting started
+
+> Run all commands from the repository root.
 
 **1. Install Rust:**
 

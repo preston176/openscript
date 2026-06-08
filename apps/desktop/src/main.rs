@@ -31,7 +31,7 @@ fn main() {
             },
             |_, cx| {
                 cx.new(|_| AppWindow {
-                    title: "OpenCut".into(),
+                    title: "OpenScript".into(),
                 })
             },
         )

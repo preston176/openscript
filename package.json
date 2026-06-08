@@ -6,11 +6,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build:tools": "turbo run build --filter=@openscript/tools",
     "build:wasm": "wasm-pack build rust/wasm --target bundler --out-dir pkg",
     "build:web": "turbo run build --filter=@openscript/web",
     "deploy:web": "turbo run deploy --filter=@openscript/web",
-    "dev:tools": "turbo run dev --filter=@openscript/tools",
     "dev:wasm": "cargo watch -w rust/crates -w rust/wasm/src -s 'wasm-pack build rust/wasm --target bundler --out-dir pkg'",
     "dev:web": "turbo run dev --filter=@openscript/web",
     "format:web": "prettier apps/web/src/services/renderer --write",
@@ -19,7 +17,6 @@
     "lint:web:fix": "eslint apps/web/src --ext .ts,.tsx --fix",
     "preview:web": "turbo run preview --filter=@openscript/web",
     "publish:wasm": "bun run build:wasm && npm publish rust/wasm/pkg --access public",
-    "start:tools": "turbo run start --filter=@openscript/tools",
     "test": "bun test"
   },
   "dependencies": {
