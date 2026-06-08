@@ -19,7 +19,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useEditor } from "@/editor/use-editor";
 import { extractTimelineAudio } from "@/media/mediabunny";
-import { decodeAudioToFloat32 } from "@/media/audio";
+import { decodeAudioToFloat32, timelineHasAudio } from "@/media/audio";
 import { transcriptionService } from "@/services/transcription/service";
 import { storageService } from "@/services/storage/service";
 import { DEFAULT_TRANSCRIPTION_SAMPLE_RATE } from "@/transcription/audio";
@@ -86,13 +86,23 @@ export function TranscriptPanel() {
 	}, []);
 
 	const generate = useCallback(async () => {
+		const scene = editor.scenes.getActiveSceneOrNull();
+		const mediaAssets = editor.media.getAssets();
+		if (!scene || !timelineHasAudio({ tracks: scene.tracks, mediaAssets })) {
+			setStatus({
+				kind: "error",
+				message:
+					"This timeline has no audio to transcribe. Add a clip with audio first.",
+			});
+			return;
+		}
 		setStatus({ kind: "working", step: "Extracting audio..." });
 		setSelection(new Set());
 		setLastSelectedId(null);
 		try {
 			const audioBlob = await extractTimelineAudio({
-				tracks: editor.scenes.getActiveScene().tracks,
-				mediaAssets: editor.media.getAssets(),
+				tracks: scene.tracks,
+				mediaAssets,
 				totalDuration: editor.timeline.getTotalDuration(),
 			});
 			setStatus({ kind: "working", step: "Preparing audio..." });
@@ -108,23 +118,32 @@ export function TranscriptPanel() {
 			});
 			const document = buildTranscriptDocument({ segments: result.segments });
 			if (document.segments.length === 0) {
+				const recognized = result.text?.trim();
 				setStatus({
 					kind: "error",
-					message:
-						"Transcription returned no word-level timing. Try a different model or longer audio.",
+					message: recognized
+						? `No word-level timing came back, so editing isn't available. Recognized text: "${recognized}"`
+						: "Transcription returned no word-level timing. Try a different model or longer audio.",
 				});
 				return;
 			}
 			editor.transcript.setDoc(document);
 			setStatus({ kind: "ready" });
 		} catch (error) {
-			setStatus({
-				kind: "error",
-				message:
-					error instanceof Error ? error.message : "Transcription failed",
-			});
+			const message =
+				error instanceof Error ? error.message : "Transcription failed";
+			// Cancellation is a user action, not an error — return to the start.
+			if (/cancel/i.test(message)) {
+				setStatus({ kind: "idle" });
+				return;
+			}
+			setStatus({ kind: "error", message });
 		}
 	}, [editor, onProgress, modelId, language]);
+
+	const cancelGeneration = useCallback(() => {
+		transcriptionService.cancel();
+	}, []);
 
 	// Rehydrate a previously-generated transcript for this project on mount. The
 	// panel is conditionally mounted (tab toggle) with component-local state, so
@@ -548,9 +567,14 @@ export function TranscriptPanel() {
 						/>
 					)}
 					{status.kind === "working" && (
-						<div className="flex items-center gap-2 text-sm text-muted-foreground">
-							<Spinner className="size-4" />
-							<span>{status.step}</span>
+						<div className="space-y-3">
+							<div className="flex items-center gap-2 text-sm text-muted-foreground">
+								<Spinner className="size-4" />
+								<span>{status.step}</span>
+							</div>
+							<Button size="sm" variant="text" onClick={cancelGeneration}>
+								Cancel
+							</Button>
 						</div>
 					)}
 					{status.kind === "error" && (

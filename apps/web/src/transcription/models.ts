@@ -34,5 +34,7 @@ export const TRANSCRIPTION_MODELS: TranscriptionModel[] = [
 	},
 ];
 
-export const DEFAULT_TRANSCRIPTION_MODEL: TranscriptionModelId =
-	"whisper-small";
+// Tiny by default: ~40 MB and fast even on the single-threaded wasm fallback
+// (no WebGPU / no cross-origin isolation). Users can pick a larger, more
+// accurate model from the panel.
+export const DEFAULT_TRANSCRIPTION_MODEL: TranscriptionModelId = "whisper-tiny";
