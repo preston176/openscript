@@ -13,7 +13,7 @@ if (!databaseUrl) {
 }
 
 export default {
-	schema: "./src/lib/db/schema.ts",
+	schema: "./src/db/schema.ts",
 	dialect: "postgresql",
 	migrations: {
 		table: "drizzle_migrations",
