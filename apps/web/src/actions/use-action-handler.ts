@@ -8,7 +8,7 @@ import type {
 } from "@/actions";
 import { bindAction, unbindAction } from "@/actions";
 
-// eslint-disable-next-line opencut/prefer-object-params -- action subscriptions read best as (action, handler, isActive).
+// eslint-disable-next-line openscript/prefer-object-params -- action subscriptions read best as (action, handler, isActive).
 export function useActionHandler<A extends TAction>(
 	action: A,
 	handler: TActionFunc<A>,

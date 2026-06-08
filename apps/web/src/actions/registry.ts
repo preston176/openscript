@@ -11,7 +11,7 @@ import type {
 type ActionHandler = (arg: unknown, trigger?: TInvocationTrigger) => void;
 const boundActions: Partial<Record<TAction, ActionHandler[]>> = {};
 
-// eslint-disable-next-line opencut/prefer-object-params -- action registries read best as (action, handler).
+// eslint-disable-next-line openscript/prefer-object-params -- action registries read best as (action, handler).
 export function bindAction<A extends TAction>(
 	action: A,
 	handler: TActionFunc<A>,
@@ -25,7 +25,7 @@ export function bindAction<A extends TAction>(
 	}
 }
 
-// eslint-disable-next-line opencut/prefer-object-params -- action registries read best as (action, handler).
+// eslint-disable-next-line openscript/prefer-object-params -- action registries read best as (action, handler).
 export function unbindAction<A extends TAction>(
 	action: A,
 	handler: TActionFunc<A>,
@@ -54,7 +54,7 @@ type InvokeActionFunc = {
 	): void;
 };
 
-// eslint-disable-next-line opencut/prefer-object-params -- dispatchers conventionally separate action, payload, and trigger.
+// eslint-disable-next-line openscript/prefer-object-params -- dispatchers conventionally separate action, payload, and trigger.
 export const invokeAction: InvokeActionFunc = <A extends TAction>(
 	action: A,
 	args?: TArgOfAction<A>,

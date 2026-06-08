@@ -1,10 +1,10 @@
 [package]
-name = "opencut-desktop"
+name = "openscript-desktop"
 version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "opencut"
+name = "openscript"
 path = "src/main.rs"
 
 [dependencies]
