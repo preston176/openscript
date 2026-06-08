@@ -1,63 +1,40 @@
 # OpenScript
 
-**The open-source, local-first alternative to Descript.**
+**Edit video by editing the transcript.**
 
-Edit video by editing text. 100% local, 100% free, 100% yours.
+Delete a sentence in the text, the cut happens automatically on the timeline. Privacy-first: transcription runs locally in the browser via Whisper.
 
-## Project Structure
+## Project structure
 
-This is a monorepo containing:
+- `apps/web/` — The Next.js web editor: timeline, preview, WebCodecs export, and the transcript-edit panel under `apps/web/src/transcript-editor/`.
+- `apps/desktop/` — Native desktop shell (Rust + GPUI, in progress).
+- `apps/website/` — Marketing/waitlist site (Next.js). Independent from the editor.
+- `rust/` — GPU compositor, effects, masks, and WASM bindings.
+- `docs/` — Architecture documentation.
 
-- **[apps/website](./apps/website)** - Marketing website and waitlist (Next.js)
-- **apps/desktop** - Desktop app (coming soon)
-- **packages/** - Shared packages (coming soon)
+## Getting started
 
-## Quick Start
+The editor runs entirely in your browser — no backend required. Projects, media, and
+transcripts are stored locally (IndexedDB/OPFS), and transcription runs on-device via
+Whisper.
 
 ```bash
-# Install dependencies
 bun install
-
-# Start development server
-bun dev
-
-# Build for production
-bun build
+bun run dev:web                  # Editor at http://localhost:3000
 ```
 
-The website will be available at http://localhost:3000
+That's all you need to edit video. Postgres + Redis are only required for the optional
+**auth**, **feedback**, and **sound-search** API routes (these fail gracefully when the
+services are absent). To enable them:
 
-## Development
+```bash
+cp apps/web/.env.example apps/web/.env.local       # set secrets as needed
+docker compose up -d db redis serverless-redis-http
+cd apps/web && bun run db:migrate                  # create the auth/feedback tables
+```
 
-### Website
-See [apps/website/README.md](./apps/website/README.md) for website-specific documentation.
-
-### Desktop App
-Coming soon! The desktop app will use Electron/Tauri with FFmpeg.wasm and Whisper for local video processing.
-
-## Roadmap
-
-- ✅ Marketing website with waitlist
-- ✅ Interactive UI demo
-- 🚧 Desktop app (Electron/Tauri)
-- 🚧 Video processing engine (FFmpeg.wasm + Whisper)
-- 🚧 Text-based video editing
-- 🚧 Export functionality
-
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines (coming soon).
+The marketing site is separate: `cd apps/website && bun dev`.
 
 ## License
 
-MIT License - see [LICENSE](./LICENSE) for details.
-
-## Links
-
-- **GitHub**: https://github.com/preston176/openscript
-- **Website**: Coming soon
-- **Discord**: Coming soon
-
----
-
-Built with ❤️ by the OpenScript community
+MIT.

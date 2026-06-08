@@ -1,0 +1,11 @@
+[package]
+name = "opencut-desktop"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "opencut"
+path = "src/main.rs"
+
+[dependencies]
+gpui = "0.2.2"

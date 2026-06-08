@@ -1,0 +1,4 @@
+[test]
+# Instantiate the real opencut-wasm before tests so editor-core modules
+# (anything importing @/wasm) can load under `bun test`. See bun-test-setup.ts.
+preload = ["./bun-test-setup.ts"]
