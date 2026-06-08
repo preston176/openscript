@@ -1,4 +1,4 @@
-# Contributing to OpenCut
+# Contributing to OpenScript
 
 ⚠️ We are currently NOT accepting feature PRs while we build out the core editor.
 
@@ -10,7 +10,7 @@ If you want to contribute:
 
 Critical bug fixes may be accepted on a case-by-case basis.
 
-Thank you for your interest in contributing to OpenCut! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to OpenScript! This document provides guidelines and instructions for contributing.
 
 ## Getting Started
 
@@ -74,7 +74,7 @@ Only needed if you're working on `apps/desktop`. See [`apps/desktop/README.md`](
 
 The current HTML-based preview is essentially a prototype - the binary approach will be the "real deal." To avoid wasted effort, please focus on other areas of the application until this refactor is complete.
 
-If you're unsure whether your idea falls into the preview category, feel free to ask us [directly in discord](https://discord.gg/zmR9N35cjK) or create a GitHub issue!
+If you're unsure whether your idea falls into the preview category, feel free to create a GitHub issue!
 
 ## Development Setup
 

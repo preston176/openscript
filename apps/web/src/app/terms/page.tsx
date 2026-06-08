@@ -68,13 +68,16 @@ export default function TermsPage() {
 							</li>
 						</ol>
 						<p className="mt-4">
-							Questions? Email us at{" "}
+							Questions? Open an issue on our{" "}
 							<a
-								href="mailto:your-contact-email@example.com"
+								href={`${SOCIAL_LINKS.github}/issues`}
+								target="_blank"
+								rel="noopener noreferrer"
 								className="text-primary hover:underline"
 							>
-								your-contact-email@example.com
+								GitHub repository
 							</a>
+							.
 						</p>
 					</AccordionContent>
 				</AccordionItem>
@@ -211,22 +214,6 @@ export default function TermsPage() {
 						className="text-primary hover:underline"
 					>
 						GitHub repository
-					</a>
-					, email us at{" "}
-					<a
-						href="mailto:your-contact-email@example.com"
-						className="text-primary hover:underline"
-					>
-						your-contact-email@example.com
-					</a>
-					, or reach out on{" "}
-					<a
-						href={SOCIAL_LINKS.x}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-primary hover:underline"
-					>
-						X (Twitter)
 					</a>
 					.
 				</p>

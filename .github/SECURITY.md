@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security vulnerability within OpenCut, please send an email to security@opencut.app. All security vulnerabilities will be promptly addressed.
+We take security vulnerabilities seriously. If you discover a security vulnerability within OpenScript, please report it privately through GitHub's security advisories (the **Security** tab of the repository → **Report a vulnerability**). All reports will be promptly addressed.
 
 Please do not report security vulnerabilities through public GitHub issues.
 
@@ -25,4 +25,4 @@ Please do not report security vulnerabilities through public GitHub issues.
 - We will provide a detailed response within 5 business days
 - We will keep you updated on our progress
 
-Thank you for helping keep OpenCut secure!
+Thank you for helping keep OpenScript secure!

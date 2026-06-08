@@ -9,7 +9,3 @@ export const SITE_INFO = {
 	twitterImage: "/open-graph/default.jpg",
 	favicon: "/favicon.ico",
 };
-
-// TODO: Replace with an OpenScript logo asset. Currently points at the
-// upstream OpenCut wordmark; the SVG will render but show the wrong brand.
-export const DEFAULT_LOGO_URL = "/logos/opencut/svg/logo.svg";
