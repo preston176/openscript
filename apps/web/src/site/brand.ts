@@ -1,4 +1,7 @@
-export const SITE_URL = "https://openscript.app";
+// Public origin where the app is served. openscript.app is not registered yet,
+// so this points at the live Vercel domain. (The editor itself lives under /app
+// via BASE_PATH below.)
+export const SITE_URL = "https://tryopenscript.vercel.app";
 
 // Keep in sync with `basePath` in next.config.ts. The editor ships as a
 // Next.js Multi-Zones "zone" mounted under /app, so its API routes and the
