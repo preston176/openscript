@@ -1,0 +1,21 @@
+# GitGuardian configuration
+# https://docs.gitguardian.com/ggshield-docs/reference/configuration
+#
+# Silences false positives on LOCAL-DEVELOPMENT placeholder credentials.
+# These are not real secrets: they appear only in example/dev/CI config, use
+# the fixed literal value below, and connect to localhost.
+version: 2
+
+secret:
+  # Ignore this exact placeholder wherever it appears.
+  ignored_matches:
+    - name: "Local dev Postgres placeholder credentials (not a real secret)"
+      match: "postgresql://openscript:openscript@localhost:5432/openscript"
+
+  # Files that only ever contain dev/example/CI placeholders.
+  ignored_paths:
+    - "apps/web/.env.example"
+    - "apps/web/Dockerfile"
+    - "docker-compose.yml"
+    - ".github/workflows/bun-ci.yml"
+    - "**/CONTRIBUTING.md"
