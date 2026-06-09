@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	Fragment,
 	useCallback,
 	useEffect,
 	useMemo,
@@ -739,6 +740,9 @@ function TranscriptView({
 					</div>
 					<p>
 						{segment.words.map((word) => {
+							// Skip whitespace-only tokens (e.g. legacy transcripts) so
+							// they don't render as empty clickable boxes.
+							if (word.text.trim().length === 0) return null;
 							if (word.id === editingWordId) {
 								return (
 									<input
@@ -821,7 +825,8 @@ function TranscriptView({
 									aria-pressed={isSelected}
 									title={isDeleted ? "Click to restore" : undefined}
 								>
-									{word.text}
+									{word.text.trim()}
+								{" "}
 								</button>
 							);
 						})}

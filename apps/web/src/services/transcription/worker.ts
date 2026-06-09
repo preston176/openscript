@@ -3,10 +3,8 @@ import {
 	type AutomaticSpeechRecognitionPipeline,
 	type AutomaticSpeechRecognitionOutput,
 } from "@huggingface/transformers";
-import type {
-	TranscriptionSegment,
-	TranscriptionWord,
-} from "@/transcription/types";
+import type { TranscriptionSegment } from "@/transcription/types";
+import { groupWordsIntoSegments } from "@/transcription/group-words";
 import {
 	DEFAULT_CHUNK_LENGTH_SECONDS,
 	DEFAULT_STRIDE_SECONDS,
@@ -166,57 +164,3 @@ async function handleTranscribe({
 	}
 }
 
-interface RawChunk {
-	text: string;
-	timestamp?: [number | null | undefined, number | null | undefined];
-}
-
-function groupWordsIntoSegments({
-	chunks,
-}: {
-	chunks: RawChunk[] | undefined;
-}): TranscriptionSegment[] {
-	if (!chunks || chunks.length === 0) return [];
-
-	const words: TranscriptionWord[] = [];
-	for (const chunk of chunks) {
-		if (!chunk.timestamp || chunk.timestamp.length < 2) continue;
-		const start = chunk.timestamp[0];
-		const end = chunk.timestamp[1] ?? start;
-		if (start == null || end == null) continue;
-		words.push({ text: chunk.text, start, end });
-	}
-
-	if (words.length === 0) return [];
-
-	const segments: TranscriptionSegment[] = [];
-	const SENTENCE_END = /[.!?]$/;
-	const MAX_GAP = 1.0;
-	const MAX_WORDS = 20;
-
-	let buffer: TranscriptionWord[] = [];
-	const flush = () => {
-		if (buffer.length === 0) return;
-		segments.push({
-			text: buffer.map((w) => w.text).join("").trim(),
-			start: buffer[0].start,
-			end: buffer[buffer.length - 1].end,
-			words: buffer,
-		});
-		buffer = [];
-	};
-
-	for (let i = 0; i < words.length; i++) {
-		const word = words[i];
-		buffer.push(word);
-		const next = words[i + 1];
-		const gap = next ? next.start - word.end : 0;
-		const trimmed = word.text.trim();
-		const endsSentence = SENTENCE_END.test(trimmed);
-		if (endsSentence || gap > MAX_GAP || buffer.length >= MAX_WORDS) {
-			flush();
-		}
-	}
-	flush();
-	return segments;
-}
