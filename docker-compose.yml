@@ -3,15 +3,15 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_USER: opencut
-      POSTGRES_PASSWORD: opencut
-      POSTGRES_DB: opencut
+      POSTGRES_USER: openscript
+      POSTGRES_PASSWORD: openscript
+      POSTGRES_DB: openscript
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U opencut"]
+      test: ["CMD-SHELL", "pg_isready -U openscript"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -61,7 +61,7 @@ services:
       - "3100:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://opencut:opencut@db:5432/opencut
+      - DATABASE_URL=postgresql://openscript:openscript@db:5432/openscript
       - BETTER_AUTH_SECRET=your-production-secret-key-here
       - UPSTASH_REDIS_REST_URL=http://serverless-redis-http:80
       - UPSTASH_REDIS_REST_TOKEN=example_token
@@ -87,4 +87,4 @@ volumes:
 
 networks:
   default:
-    name: opencut-network
+    name: openscript-network

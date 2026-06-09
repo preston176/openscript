@@ -39,7 +39,7 @@ powershell -ExecutionPolicy Bypass -File .\apps\desktop\script\setup.ps1
 **3. Run:**
 
 ```bash
-cargo run -p opencut-desktop
+cargo run -p openscript-desktop
 ```
 
 ## Platform notes

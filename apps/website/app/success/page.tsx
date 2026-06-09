@@ -60,13 +60,13 @@ export default function SuccessPage() {
                         See OpenScript in Action
                     </h3>
                     <p className="text-zinc-300 mb-4">
-                        Check out our interactive demo to see how text-based video editing works
+                        Jump into the beta editor — it runs entirely in your browser, no upload required
                     </p>
                     <a
-                        href="/editor"
+                        href="/app"
                         className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:scale-105"
                     >
-                        Try the Demo →
+                        Launch the beta →
                     </a>
                 </div>
 

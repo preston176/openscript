@@ -10,9 +10,9 @@ import preferObjectParams from "./eslint/rules/prefer-object-params.mjs";
 
 const webFiles = ["apps/web/src/**/*.{ts,tsx}"];
 
-const opencutEslintPlugin = {
+const openscriptEslintPlugin = {
 	meta: {
-		name: "eslint-plugin-opencut",
+		name: "eslint-plugin-openscript",
 		version: "0.0.0",
 	},
 	rules: {
@@ -67,7 +67,7 @@ export default [
 	{
 		files: webFiles,
 		plugins: {
-			opencut: opencutEslintPlugin,
+			openscript: openscriptEslintPlugin,
 		},
 		rules: {
 			"@typescript-eslint/no-empty-object-type": "warn",
@@ -82,7 +82,7 @@ export default [
 				},
 			],
 			"no-empty": "warn",
-			"opencut/prefer-object-params": "error",
+			"openscript/prefer-object-params": "error",
 			
 			// `react/prop-types` is for the JS-era React workflow where runtime
 			// `propTypes` declarations are the prop contract. In this TS-only
