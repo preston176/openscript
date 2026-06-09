@@ -41,6 +41,20 @@ export class TranscriptStore {
 		this.notify();
 	}
 
+	/**
+	 * Discard the active transcript AND remove its persisted copy, so a refresh
+	 * doesn't reload it. (setDoc(null) only clears memory — it deliberately never
+	 * touches storage, since undo/redo round-trips through it.)
+	 */
+	clearDoc(): void {
+		this.doc = null;
+		const projectId = this.editor.project.getActiveOrNull()?.metadata.id;
+		if (projectId) {
+			void storageService.deleteTranscript({ projectId });
+		}
+		this.notify();
+	}
+
 	subscribe(listener: () => void): () => void {
 		this.listeners.add(listener);
 		return () => this.listeners.delete(listener);

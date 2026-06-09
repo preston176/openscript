@@ -468,6 +468,23 @@ export function TranscriptPanel() {
 		}
 	}, [activeWordId]);
 
+	const clearTranscript = useCallback(() => {
+		if (
+			!window.confirm(
+				"Clear this transcript? You can regenerate it, but any transcript text edits will be lost.",
+			)
+		) {
+			return;
+		}
+		editor.transcript.clearDoc();
+		setStatus({ kind: "idle" });
+		setSelection(new Set());
+		setLastSelectedId(null);
+		setSearchOpen(false);
+		setSearchQuery("");
+		setEditingWordId(null);
+	}, [editor]);
+
 	return (
 		<div className="panel bg-background flex h-full flex-col overflow-hidden rounded-sm border">
 			<div className="border-b px-3 py-2 flex flex-wrap items-center justify-between gap-2">
@@ -495,6 +512,14 @@ export function TranscriptPanel() {
 								Remove {fillerCount} filler{fillerCount === 1 ? "" : "s"}
 							</Button>
 						)}
+						<Button
+							size="sm"
+							variant="text"
+							onClick={clearTranscript}
+							title="Clear the transcript and start over (lets you pick a model and re-transcribe)"
+						>
+							Clear
+						</Button>
 						<Button
 							size="sm"
 							variant="destructive-foreground"
