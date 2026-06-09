@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { Redis } from "@upstash/redis";
 import { db } from "@/db";
 import { webEnv } from "@/env/web";
+import { BASE_PATH } from "@/site/brand";
 
 const redis = new Redis({
 	url: webEnv.UPSTASH_REDIS_REST_URL,
@@ -35,8 +36,11 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	baseURL: webEnv.NEXT_PUBLIC_SITE_URL,
+	// baseURL includes the /app basePath so Better Auth's endpoints resolve to
+	// <origin>/app/api/auth/* — matching where Next mounts the route handler.
+	baseURL: `${webEnv.NEXT_PUBLIC_SITE_URL}${BASE_PATH}`,
 	appName: "OpenScript",
+	// trustedOrigins is an origin check (scheme+host, no path) — leave unprefixed.
 	trustedOrigins: [webEnv.NEXT_PUBLIC_SITE_URL],
 });
 

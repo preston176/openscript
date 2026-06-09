@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
 	reactStrictMode: true,
 	productionBrowserSourceMaps: true,
 	output: "standalone",
+	// Multi-Zones: this app is the editor "zone" and owns the /app path prefix.
+	// The marketing site (apps/website) serves "/" and rewrites /app/* here.
+	// basePath also namespaces this app's /_next assets under /app/_next so they
+	// never collide with the marketing zone's assets.
+	basePath: "/app",
 	images: {
 		remotePatterns: [
 			{
