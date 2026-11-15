@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { DESCRIPTION, PRODUCT_NAME, SITE_URL, TAGLINE } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,14 +8,21 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const title = `${PRODUCT_NAME}: ${TAGLINE.toLowerCase()}`;
+
 export const metadata: Metadata = {
-  title: "OpenScript | Edit Video Like a Word Doc",
-  description: "The open-source alternative to Descript. Edit video by editing text. Local-first, privacy-focused video editing powered by AI.",
+  metadataBase: new URL(SITE_URL),
+  title: `${title}, free and private`,
+  description: DESCRIPTION,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "OpenScript | Edit Video Like a Word Doc",
-    description: "The open-source alternative to Descript. Edit video by editing text. Local-first, privacy-focused video editing.",
     type: "website",
+    siteName: PRODUCT_NAME,
+    title,
+    description: DESCRIPTION,
+    url: "/",
   },
+  twitter: { card: "summary_large_image", title, description: DESCRIPTION },
 };
 
 export default function RootLayout({
@@ -24,17 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased bg-black text-white`}
-      >
-        {children}
-
-        {/* Tally Widget Script */}
-        <script
-          async
-          src="https://tally.so/widgets/embed.js"
-        ></script>
-      </body>
+      <body className={inter.variable}>{children}</body>
     </html>
   );
 }
