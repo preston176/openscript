@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { transformProjectV5ToV6 } from "../transformers/v5-to-v6";
 import { v5Project } from "./fixtures";
 import { asRecordArray } from "./helpers";

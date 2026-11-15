@@ -1,4 +1,4 @@
-import { afterAll, describe, it } from "bun:test";
+import { afterAll, describe, it } from "vitest";
 import { RuleTester } from "eslint";
 import tseslint from "typescript-eslint";
 import rule from "../prefer-object-params.mjs";

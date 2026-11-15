@@ -39,12 +39,10 @@ git clone https://github.com/preston176/openscript.git
 cd openscript
 
 # Install dependencies
-bun install
-# or
 npm install
 
 # Start the development server
-bun run dev
+npm run dev
 ```
 
 Open http://localhost:3000 to view the landing page.

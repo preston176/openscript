@@ -60,10 +60,10 @@ replays `afterTracks`/`afterDoc` (no ripple recompute). RESTORE = `rippleOpenEle
 
 ## Test-infra notes (for steps 6-7)
 
-- `EditorCore.getInstance()` DOES construct under `bun test` (with the wasm preload) —
+- `EditorCore.getInstance()` DOES construct under `npm test` (vitest, with the wasm shim in apps/web/test-wasm.ts) —
   confirmed by probe. So an integration test on a real editor is feasible.
 - BUT: `editor.timeline.updateTracks(...)` triggers the SaveManager → `storageService` →
-  IndexedDB, which is absent under bun and will reject (risking an "unhandled error
+  IndexedDB, which is absent under vitest and will reject (risking an "unhandled error
   between tests"). The fidelity test must avoid that: either (a) extract the split/trim +
   ripple-close/open transform into a PURE `tracks -> {afterTracks, removed}` helper and
   test it directly on fixture `SceneTracks` (no editor/save), or (b) stub/disable the save

@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 // whole product is one origin: marketing at "/", editor at "/app".
 //
 // APP_ZONE_URL is the editor zone's own deployment URL (e.g. its Vercel URL or
-// a custom domain). Locally, run the editor with `bun run dev:web` and it will
+// a custom domain). Locally, run the editor with `npm run dev:web` and it will
 // be proxied from here. Set APP_ZONE_URL in the marketing site's environment
 // for preview/production deploys.
 const APP_ZONE_URL = process.env.APP_ZONE_URL ?? "http://localhost:3000";

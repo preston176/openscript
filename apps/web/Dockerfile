@@ -1,4 +1,4 @@
-FROM oven/bun:alpine AS base
+FROM node:22-alpine AS base
 
 FROM base AS builder
 
@@ -9,12 +9,12 @@ ARG FREESOUND_API_KEY
 ARG NEXT_PUBLIC_MARBLE_API_URL=https://api.marblecms.com
 ARG MARBLE_WORKSPACE_KEY=build-placeholder
 
-COPY package.json package.json
-COPY bun.lock bun.lock
-COPY turbo.json turbo.json
+COPY package.json package-lock.json .npmrc turbo.json ./
 
+# npm ci checks every workspace in the lockfile, so the website manifest has to be present too.
 COPY apps/web/package.json apps/web/package.json
-RUN bun install
+COPY apps/website/package.json apps/website/package.json
+RUN npm ci
 
 COPY apps/web/ apps/web/
 
@@ -34,7 +34,7 @@ ENV FREESOUND_CLIENT_ID=$FREESOUND_CLIENT_ID
 ENV FREESOUND_API_KEY=$FREESOUND_API_KEY
 
 WORKDIR /app/apps/web
-RUN bun run build
+RUN npm run build
 
 # Production image
 FROM base AS runner
@@ -59,4 +59,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bun", "apps/web/server.js"]
+CMD ["node", "apps/web/server.js"]

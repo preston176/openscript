@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { getProjectId, transformProjectV0ToV1 } from "../transformers/v0-to-v1";
 import {
 	projectMalformed,

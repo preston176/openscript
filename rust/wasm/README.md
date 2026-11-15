@@ -29,17 +29,17 @@ The web app depends on the published `opencut-wasm` package by default. If you a
 
 ```bash
 # From the repo root
-bun run build:wasm
+npm run build:wasm
 
 cd rust/wasm/pkg
-bun link
+npm link
 
 cd ../../../apps/web
-bun link opencut-wasm
+npm link opencut-wasm
 ```
 
 While you work, rebuild on changes from the repo root:
 
 ```bash
-bun dev:wasm
+npm run dev:wasm
 ```

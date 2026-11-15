@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import type { AudioElement, AudioTrack, SceneTracks, VideoTrack } from "@/timeline";
 import { mediaTimeFromSeconds, ZERO_MEDIA_TIME } from "@/wasm";
 import { migrateTranscript } from "../migrate";
