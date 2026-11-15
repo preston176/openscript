@@ -7,8 +7,8 @@ Delete a sentence in the text, the cut happens automatically on the timeline. Pr
 ## Project structure
 
 - `apps/web/` — The Next.js web editor: timeline, preview, WebCodecs export, and the transcript-edit panel under `apps/web/src/transcript-editor/`.
-- `apps/desktop/` — Native desktop shell (Rust + GPUI, in progress).
-- `apps/website/` — Marketing/waitlist site (Next.js). Independent from the editor.
+- `apps/desktop/` — Placeholder native shell (Rust + GPUI). Not part of the launch; the product is the web editor.
+- `apps/website/` — Landing page (Next.js). Serves `/` and proxies `/app` to the editor (Multi-Zones).
 - `rust/` — GPU compositor, effects, masks, and WASM bindings.
 - `docs/` — Architecture documentation.
 
@@ -20,7 +20,7 @@ Whisper.
 
 ```bash
 bun install
-bun run dev:web                  # Editor at http://localhost:3000
+bun run dev:web                  # Editor at http://localhost:3000/app
 ```
 
 That's all you need to edit video. Postgres + Redis are only required for the optional
@@ -30,7 +30,7 @@ services are absent). To enable them:
 ```bash
 cp apps/web/.env.example apps/web/.env.local       # set secrets as needed
 docker compose up -d db redis serverless-redis-http
-cd apps/web && bun run db:migrate                  # create the auth/feedback tables
+docker compose run --rm migrate                    # create the auth/feedback tables
 ```
 
 The marketing site is separate: `cd apps/website && bun dev`.
