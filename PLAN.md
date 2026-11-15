@@ -65,7 +65,7 @@ Three confirmed correctness bugs in the new feature.
 
 ## Phase 6 — Launch (goal: 1000 users)
 
-- [x] **Landing page** in `apps/website`, in OpenScript's dark theme (black, zinc, `#0070f3`, Inter), structure ported from Offsite (`~/Code/personal/S3-bucket`): nav, hero, Screen Studio–style scripted demo (`components/demo-reel.tsx`: transcribe, remove fillers, cut a retake, export), how it works, features, privacy, good to know, FAQ with JSON-LD, footer, OG image, robots, sitemap. Builds with npm.
+- [x] **Landing page** in `apps/website`, in OpenScript's dark theme (black, zinc, `#0070f3`, Inter), structure ported from Offsite (`~/Code/personal/S3-bucket`): nav, hero, Screen Studio–style scripted demo (`components/demo-reel.tsx`: transcribe, remove fillers, cut a retake, export), how it works, features, privacy, FAQ with JSON-LD, footer, OG image, robots, sitemap. Builds with npm.
 - [x] **Analytics**: dropped (user call, 2026-11-15). Removed the Databuddy claims from the privacy page; nothing ever loaded it.
 - [ ] **Waitlist**: `NEXT_PUBLIC_TALLY_FORM_ID` unset, so the "Get launch updates" link is hidden. Set it in the website deploy.
 - [x] **Deploy both zones**: already wired. Vercel Git integration builds `openscript` (website, root domain `tryopenscript.vercel.app`) and `openscript-app` (editor) on every push; merging to `main` deploys production. Live `/app` proxy confirmed 2026-11-15.
