@@ -14,6 +14,20 @@ const nextConfig: NextConfig = {
 	// basePath also namespaces this app's /_next assets under /app/_next so they
 	// never collide with the marketing zone's assets.
 	basePath: "/app",
+	// Cross-origin isolation lets the Whisper wasm backend use threads. Scoped to the
+	// editor only, and `credentialless` (not `require-corp`) so cross-origin images and
+	// stickers still load. Safari ignores `credentialless` and stays single-threaded.
+	async headers() {
+		return [
+			{
+				source: "/editor/:path*",
+				headers: [
+					{ key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+					{ key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
+				],
+			},
+		];
+	},
 	images: {
 		remotePatterns: [
 			{

@@ -1,0 +1,354 @@
+/* Layout ported from the Offsite landing page (S3-bucket/src/routes/+page.svelte). */
+.top {
+  /* The old OpenScript hero: dot grid with a blue glow behind the headline. */
+  background:
+    radial-gradient(ellipse 60rem 32rem at 50% -6rem, rgb(0 112 243 / 0.28), transparent 70%),
+    radial-gradient(circle, rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--bg);
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+.nav nav {
+  display: flex;
+  gap: 2rem;
+  margin-left: 1.5rem;
+}
+.nav nav a,
+.github {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+.nav nav a:hover,
+.github:hover {
+  color: var(--primary-text);
+}
+.navCta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+.github {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.hero {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vh, 5rem) 1.5rem 0;
+}
+.hero h1 {
+  max-width: 21ch;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--heading);
+}
+.lede {
+  max-width: 40rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-weak);
+}
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.note {
+  font-size: 0.875rem;
+  color: var(--text-weak);
+}
+.note a {
+  color: var(--primary-text);
+  font-weight: 500;
+}
+
+/* Sections */
+.section {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: clamp(4rem, 9vw, 6.5rem) 1.5rem 0;
+  text-align: center;
+  font-size: 1rem;
+}
+.section.narrow {
+  max-width: 48rem;
+}
+.section h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(1.875rem, 3.5vw, 2.5rem);
+  letter-spacing: -0.02em;
+  color: var(--heading);
+}
+.sectionLede {
+  margin: 0.75rem auto 0;
+  max-width: 36rem;
+  color: var(--text-weak);
+  font-size: 1.0625rem;
+}
+.section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.steps {
+  list-style: none;
+  margin: 3rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+.steps li {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+.stepIcon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 24px rgb(0 112 243 / 0.4);
+}
+.stepN {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+.steps p,
+.features p {
+  color: var(--text-weak);
+  max-width: 22rem;
+}
+
+.features {
+  list-style: none;
+  margin: 3rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  text-align: left;
+}
+.features li {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 1.75rem;
+  background: var(--bg-tint);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition:
+    box-shadow 200ms var(--ease),
+    border-color 200ms var(--ease);
+}
+.features li:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+.fIcon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--primary-weak);
+  color: var(--primary-text);
+}
+
+.where {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+  text-align: left;
+}
+.whereText {
+  display: grid;
+  gap: 1rem;
+}
+.whereText .fIcon {
+  margin: 0;
+}
+.whereText p {
+  color: var(--text-weak);
+  max-width: 34rem;
+}
+.regions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.regions li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-tint);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.pin {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--primary-weak);
+  color: var(--primary-text);
+}
+.rtext {
+  display: grid;
+}
+.rtext span {
+  font-size: 0.875rem;
+  color: var(--text-weak);
+}
+
+.honest {
+  display: flex;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  background: var(--bg-tint);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  text-align: left;
+}
+.hIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  color: var(--primary-text);
+}
+.honest h2 {
+  font-size: 1.75rem;
+}
+.honest ul {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2.5rem;
+  color: var(--text-weak);
+}
+.honest strong {
+  display: block;
+  color: var(--text);
+}
+
+.faq {
+  margin-top: 2.5rem;
+  text-align: left;
+  border-top: 1px solid var(--border);
+}
+.faq details {
+  border-bottom: 1px solid var(--border);
+}
+.faq summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0.25rem;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  cursor: pointer;
+  list-style: none;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: "";
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-right: 2px solid var(--primary-text);
+  border-bottom: 2px solid var(--primary-text);
+  transform: rotate(45deg) translateY(-3px);
+  transition: transform 200ms var(--ease);
+}
+.faq details[open] summary::after {
+  transform: rotate(-135deg) translateY(-3px);
+}
+.faq summary:hover {
+  color: var(--primary-text);
+}
+.faq details p {
+  padding: 0 0.25rem 1.25rem;
+  color: var(--text-weak);
+  max-width: 65ch;
+}
+
+.final {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .nav nav {
+    display: none;
+  }
+  .steps,
+  .features {
+    grid-template-columns: 1fr;
+  }
+  .honest ul {
+    grid-template-columns: 1fr;
+  }
+  .where {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+@media (max-width: 560px) {
+  .github {
+    display: none;
+  }
+  .nav {
+    gap: 1rem;
+  }
+  .honest {
+    flex-direction: column;
+    padding: 1.75rem;
+  }
+}

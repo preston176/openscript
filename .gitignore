@@ -26,3 +26,5 @@ target/
 .cargo-tools/
 
 rust-migration-notes.md
+# per-project scratchpad
+*.todo

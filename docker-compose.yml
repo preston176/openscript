@@ -47,6 +47,22 @@ services:
       retries: 5
       start_period: 10s
 
+  # One-shot: applies apps/web/migrations, then exits. The standalone web image has no drizzle-kit.
+  migrate:
+    image: node:22-alpine
+    volumes:
+      - ./apps/web/drizzle.config.ts:/src/drizzle.config.ts:ro
+      - ./apps/web/migrations:/src/migrations:ro
+    environment:
+      - DATABASE_URL=postgresql://openscript:openscript@db:5432/openscript
+    command: >
+      sh -c "mkdir -p /m && cp -r /src/. /m && cd /m &&
+             npm i --silent --no-save --no-package-lock drizzle-kit@0.31 drizzle-orm@0.44 dotenv@16 pg@8 &&
+             npx drizzle-kit migrate"
+    depends_on:
+      db:
+        condition: service_healthy
+
   web:
     build:
       context: .
@@ -71,8 +87,8 @@ services:
       - FREESOUND_CLIENT_ID=${FREESOUND_CLIENT_ID}
       - FREESOUND_API_KEY=${FREESOUND_API_KEY}
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       serverless-redis-http:
         condition: service_healthy
     healthcheck:
