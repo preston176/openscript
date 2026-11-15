@@ -40,6 +40,7 @@ export function DemoReel() {
   const root = useRef<HTMLElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const scene = useRef<HTMLDivElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
 
   const [width, setWidth] = useState(W);
   const [cam, setCam] = useState({ x: W / 2, y: H / 2, z: 1 });
@@ -217,6 +218,14 @@ export function DemoReel() {
     };
   }, []);
 
+  // The preview clip pauses with the reel (pause button, reduced motion).
+  useEffect(() => {
+    const v = video.current;
+    if (!v) return;
+    if (playing) v.play().catch(() => {});
+    else v.pause();
+  }, [playing]);
+
   const togglePlay = () => {
     playingRef.current = !playingRef.current;
     setPlaying(playingRef.current);
@@ -281,7 +290,18 @@ export function DemoReel() {
               <div className={s.body}>
                 <div className={s.preview}>
                   <div className={s.frame}>
-                    <span className={s.speaker} />
+                    {/* Stock clip: Pexels 6878208 by cottonbro studio (Pexels license, free for commercial use). */}
+                    <video
+                      ref={video}
+                      className={s.footage}
+                      src="/demo/interview.mp4"
+                      poster="/demo/interview.jpg"
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                      preload="auto"
+                    />
                     <span className={s.caption}>Editing video should feel as easy as editing a document.</span>
                   </div>
                 </div>
