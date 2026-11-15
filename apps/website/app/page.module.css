@@ -238,42 +238,6 @@
   color: var(--text-weak);
 }
 
-.honest {
-  display: flex;
-  gap: 1.5rem;
-  padding: 2.5rem;
-  background: var(--bg-tint);
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
-  text-align: left;
-}
-.hIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  background: var(--bg-subtle);
-  color: var(--primary-text);
-}
-.honest h2 {
-  font-size: 1.75rem;
-}
-.honest ul {
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem 2.5rem;
-  color: var(--text-weak);
-}
-.honest strong {
-  display: block;
-  color: var(--text);
-}
-
 .faq {
   margin-top: 2.5rem;
   text-align: left;
@@ -332,9 +296,6 @@
   .features {
     grid-template-columns: 1fr;
   }
-  .honest ul {
-    grid-template-columns: 1fr;
-  }
   .where {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -346,9 +307,5 @@
   }
   .nav {
     gap: 1rem;
-  }
-  .honest {
-    flex-direction: column;
-    padding: 1.75rem;
   }
 }

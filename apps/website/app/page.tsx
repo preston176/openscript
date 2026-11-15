@@ -236,34 +236,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={s.section}>
-          <div className={s.honest}>
-            <span className={s.hIcon}>
-              <ShieldCheck size={28} aria-hidden="true" />
-            </span>
-            <div>
-              <h2>Good to know before you start</h2>
-              <ul>
-                <li>
-                  <strong>It&apos;s a beta.</strong> Keep your original recordings until you have exported the final video.
-                </li>
-                <li>
-                  <strong>Use a desktop browser.</strong> The editor is built for screens 1024 pixels and wider. Chrome
-                  and Edge are the fastest.
-                </li>
-                <li>
-                  <strong>The first transcript downloads a model.</strong> Tiny is about 40 MB. After that it is cached and
-                  starts right away.
-                </li>
-                <li>
-                  <strong>Projects live in this browser.</strong> Clearing your browser&apos;s site data deletes them, so
-                  export anything you want to keep.
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
         <section id="faq" className={`${s.section} ${s.narrow}`}>
           <h2>Frequently asked questions</h2>
           <div className={s.faq}>
