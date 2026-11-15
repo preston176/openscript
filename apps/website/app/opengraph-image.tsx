@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LogoMark } from "@/components/logo";
 import { PRODUCT_NAME, TAGLINE } from "@/lib/site";
 
 export const alt = `${PRODUCT_NAME}: ${TAGLINE.toLowerCase()}`;
@@ -28,7 +29,11 @@ export default function OpengraphImage() {
           color: "#fff",
         }}
       >
-        <div style={{ display: "flex", fontSize: 40, fontWeight: 700 }}>{PRODUCT_NAME}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 44, fontWeight: 700 }}>
+          <LogoMark size={52} />
+          <span>Open</span>
+          <span style={{ marginLeft: -18, color: "#a1a1aa" }}>Script</span>
+        </div>
         <div style={{ display: "flex", fontSize: 72, fontWeight: 700, lineHeight: 1.1, maxWidth: 1000 }}>{TAGLINE}</div>
         <div
           style={{

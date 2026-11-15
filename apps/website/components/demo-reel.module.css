@@ -103,7 +103,7 @@
   font-size: 16px;
 }
 .topbar :global(.logo svg) {
-  width: 22px;
+  width: auto;
   height: 22px;
 }
 .project {

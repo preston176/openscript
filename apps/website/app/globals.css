@@ -154,3 +154,6 @@ p {
   letter-spacing: -0.02em;
   line-height: 1;
 }
+.logo-script {
+  color: var(--text-weak);
+}
