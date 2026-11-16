@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import {
 	findClosestPointOnFreeformSegment,
 	getFreeformPathClosedStateAfterPointRemoval,
@@ -364,7 +364,7 @@ describe("mask snapping", () => {
 		]);
 	});
 
-	// Skipped outside a DOM/canvas environment (e.g. `bun test`): measuring a
+	// Skipped outside a DOM/canvas environment (e.g. vitest under Node): measuring a
 	// text mask's intrinsic bounds requires a 2D canvas context, and the snap
 	// target depends on the browser's font metrics. Runs in a browser/jsdom.
 	test.skipIf(

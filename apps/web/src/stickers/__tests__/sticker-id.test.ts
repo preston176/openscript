@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { buildStickerId, parseStickerId } from "../sticker-id";
 
 describe("sticker-id strict mode", () => {

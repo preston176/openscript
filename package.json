@@ -1,6 +1,5 @@
 {
   "name": "openscript",
-  "packageManager": "bun@1.2.18",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -16,13 +15,13 @@
     "lint:web": "eslint apps/web/src --ext .ts,.tsx",
     "lint:web:fix": "eslint apps/web/src --ext .ts,.tsx --fix",
     "preview:web": "turbo run preview --filter=@openscript/web",
-    "publish:wasm": "bun run build:wasm && npm publish rust/wasm/pkg --access public",
-    "test": "bun test"
+    "publish:wasm": "npm run build:wasm && npm publish rust/wasm/pkg --access public",
+    "test": "vitest run"
   },
   "dependencies": {
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
-    "better-auth": "^1.4.15",
+    "better-auth": "~1.6.9",
     "next": "16.1.3",
     "opencut-wasm": "^0.2.10"
   },
@@ -38,9 +37,7 @@
     "prettier": "^3.8.3",
     "turbo": "^2.8.20",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.59.0"
-  },
-  "trustedDependencies": [
-    "@tailwindcss/oxide"
-  ]
+    "typescript-eslint": "^8.59.0",
+    "vitest": "^3.2.4"
+  }
 }

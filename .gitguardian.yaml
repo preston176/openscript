@@ -17,5 +17,5 @@ secret:
     - "apps/web/.env.example"
     - "apps/web/Dockerfile"
     - "docker-compose.yml"
-    - ".github/workflows/bun-ci.yml"
+    - ".github/workflows/ci.yml"
     - "**/CONTRIBUTING.md"

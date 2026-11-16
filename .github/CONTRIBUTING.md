@@ -16,9 +16,7 @@ Thank you for your interest in contributing to OpenScript! This document provide
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/) (v18 or later)
-- [Bun](https://bun.sh/docs/installation)
-  (for `npm` alternative)
+- [Node.js](https://nodejs.org/en/) (v22 or later) with npm
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Rust toolchain (only needed for `apps/desktop`)
 
@@ -42,12 +40,12 @@ Thank you for your interest in contributing to OpenScript! This document provide
    Copy-Item .env.example .env.local
    ```
 
-5. Install dependencies: `bun install`
-6. Start the development server: `bun run dev`
+5. Install dependencies: `npm install`
+6. Start the development server: `npm run dev`
 
 > **Note:** Web development uses the published `opencut-wasm` package by default, so a fresh clone does not need a local WASM build.
 >
-> If you are editing `rust/wasm`, run `bun run build:wasm`, then `cd rust/wasm/pkg && bun link`, then `cd ../../../apps/web && bun link opencut-wasm`.
+> If you are editing `rust/wasm`, run `npm run build:wasm`, then `cd rust/wasm/pkg && npm link`, then `cd ../../../apps/web && npm link opencut-wasm`.
 
 ### Desktop setup
 
@@ -141,8 +139,8 @@ If you're unsure whether your idea falls into the preview category, feel free to
    # Or use an online generator: https://generate-secret.vercel.app/32
    ```
 
-5. Run database migrations: `bun run db:migrate`
-6. Start the development server: `bun run dev`
+5. Run database migrations: `npm run db:migrate`
+6. Start the development server: `npm run dev`
 
 ### Desktop
 
@@ -168,7 +166,7 @@ Working on `apps/desktop`? See [`apps/desktop/README.md`](../apps/desktop/README
 2. Make your changes
 3. Run the relevant checks for the area you touched:
 
-   - Web changes: from `apps/web`, run `bun run lint` and `bun run format`
+   - Web changes: from `apps/web`, run `npm run lint` and `npm run format`
    - Desktop changes: run `./apps/desktop/script/setup` if your environment isn't set up yet
 
 4. Commit your changes with a descriptive message
@@ -177,8 +175,8 @@ Working on `apps/desktop`? See [`apps/desktop/README.md`](../apps/desktop/README
 ## Code Style
 
 - We use ESLint for linting and Prettier for formatting
-- Run `bun run format` from the `apps/web` directory to format code
-- Run `bun run lint` from the `apps/web` directory to check for linting issues
+- Run `npm run format` from the `apps/web` directory to format code
+- Run `npm run lint` from the `apps/web` directory to check for linting issues
 - Follow the existing code patterns
 
 ## Pull Request Process

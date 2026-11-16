@@ -1,10 +1,12 @@
-import { describe, expect, test, mock } from "bun:test";
+import { describe, expect, test, vi } from "vitest";
 import type { EditorCore } from "@/core";
 import type { TranscriptDocument } from "@/transcript-editor/types";
 
-const deleteTranscript = mock(() => Promise.resolve());
-const saveTranscript = mock(() => Promise.resolve());
-mock.module("@/services/storage/service", () => ({
+const { deleteTranscript, saveTranscript } = vi.hoisted(() => ({
+	deleteTranscript: vi.fn(() => Promise.resolve()),
+	saveTranscript: vi.fn(() => Promise.resolve()),
+}));
+vi.mock("@/services/storage/service", () => ({
 	storageService: { deleteTranscript, saveTranscript },
 }));
 

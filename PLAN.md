@@ -18,7 +18,7 @@ OpenScript is a fork of OpenCut (browser video editor, Next.js + Rust/WASM) with
 - [x] **Sticker registry registered under `undefined`.** [stickers/providers/index.ts:22](apps/web/src/stickers/providers/index.ts#L22) calls `register(provider.id, provider)` positionally against an object-param API → built-in stickers (logos/flags/shapes) broken at runtime. Fix to object form + add a unit test.
 - [x] **Storage migration adapter calls positional (4 sites).** [runner.ts:41,98](apps/web/src/services/storage/migrations/runner.ts#L41) and [v1-to-v2.ts:124,133,160](apps/web/src/services/storage/migrations/v1-to-v2.ts#L124) construct `IndexedDBAdapter` / call `.set` positionally → legacy-project migration opens `indexedDB.open(undefined)` and corrupts/fails. Fix to object form (tsc is the guard; IndexedDB isn't available under `bun test`).
 - [x] **Stale MediaTime tests.** [update-pipeline.test.ts:69](apps/web/src/timeline/__tests__/update-pipeline.test.ts#L69) and [resolve.test.ts:651](apps/web/src/timeline/placement/__tests__/resolve.test.ts#L651) pass raw `number` where the branded `MediaTime` is required. Wrap with `mediaTime({ ticks })` / `ZERO_MEDIA_TIME`.
-- [~] **Verify:** full typecheck clean, `bun test` green, `next build` exits 0. (2026-11-15, via npm: typecheck clean and `next build` exits 0 for both apps. `bun test` not run: no Bun on this machine by choice, and the 41 test files import `bun:test`.)
+- [x] **Verify:** full typecheck clean, tests green, `next build` exits 0. (2026-11-15, on npm: typecheck clean for both apps, `npm test` (vitest) 42 files / 264 tests pass, `next build` exits 0 for both apps.)
 
 Also noted (non-blocking): `bun.lock` is stale vs `package.json` (`--frozen-lockfile` fails); typescript/next version drift between root and `apps/web`; ESLint is red (131 problems — mostly style, but 15 `react-hooks/set-state-in-effect` are real smells).
 
@@ -69,5 +69,5 @@ Three confirmed correctness bugs in the new feature.
 - [x] **Analytics**: dropped (user call, 2026-11-15). Removed the Databuddy claims from the privacy page; nothing ever loaded it.
 - [ ] **Waitlist**: `NEXT_PUBLIC_TALLY_FORM_ID` unset, so the "Get launch updates" link is hidden. Set it in the website deploy.
 - [x] **Deploy both zones**: already wired. Vercel Git integration builds `openscript` (website, root domain `tryopenscript.vercel.app`) and `openscript-app` (editor) on every push; merging to `main` deploys production. Live `/app` proxy confirmed 2026-11-15.
-- [ ] **Package manager**: user wants npm. Repo still declares `bun@1.2.18`, ships `bun.lock`, a Bun-style `.npmrc` (`install-strategy=nested`, `node-linker`) and 41 `bun:test` test files. Switching needs a `package-lock.json`, `.npmrc` cleanup, and a test runner decision (vitest).
+- [x] **Package manager**: moved to npm (2026-11-15). `package-lock.json` replaces `bun.lock`, `.npmrc` only sets `legacy-peer-deps`, tests run on vitest (`apps/web/test-wasm.ts` instantiates the real wasm), CI and the Dockerfile use Node 22 + `npm ci`, better-auth pinned to `~1.6.9`.
 

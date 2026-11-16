@@ -19,8 +19,8 @@ transcripts are stored locally (IndexedDB/OPFS), and transcription runs on-devic
 Whisper.
 
 ```bash
-bun install
-bun run dev:web                  # Editor at http://localhost:3000/app
+npm install
+npm run dev:web                  # Editor at http://localhost:3000/app
 ```
 
 That's all you need to edit video. Postgres + Redis are only required for the optional
@@ -33,7 +33,9 @@ docker compose up -d db redis serverless-redis-http
 docker compose run --rm migrate                    # create the auth/feedback tables
 ```
 
-The marketing site is separate: `cd apps/website && bun dev`.
+Run the tests with `npm test`.
+
+The marketing site is separate: `npm run dev -w @openscript/website`.
 
 ## License
 

@@ -3,9 +3,9 @@ import {
 	beforeEach,
 	describe,
 	expect,
-	mock,
 	test,
-} from "bun:test";
+	vi,
+} from "vitest";
 import {
 	decodePersistedKeybindingsState,
 	migratePersistedKeybindingsState,
@@ -14,12 +14,12 @@ import {
 } from "../persistence";
 
 describe("keybinding persistence", () => {
-	let warnSpy: ReturnType<typeof mock>;
+	let warnSpy: ReturnType<typeof vi.fn>;
 	let originalWarn: typeof console.warn;
 
 	beforeEach(() => {
 		originalWarn = console.warn;
-		warnSpy = mock(() => {});
+		warnSpy = vi.fn(() => {});
 		console.warn = warnSpy;
 	});
 

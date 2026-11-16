@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import type { AudioElement } from "@/timeline";
 import { mediaTime, ZERO_MEDIA_TIME } from "@/wasm";
 import { rippleOpenElements } from "../open";
