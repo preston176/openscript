@@ -15,7 +15,3 @@ export const DESCRIPTION = `${PRODUCT_NAME} is a free, open-source video editor 
 export const SITE_URL = "https://tryopenscript.vercel.app";
 export const GITHUB_URL = "https://github.com/preston176/openscript";
 export const X_URL = "https://x.com/Preston_Mayieka";
-
-// The waitlist link only renders once a Tally form is configured.
-const tallyId = process.env.NEXT_PUBLIC_TALLY_FORM_ID;
-export const WAITLIST_URL = tallyId ? `https://tally.so/r/${tallyId}` : null;

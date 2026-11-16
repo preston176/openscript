@@ -15,7 +15,7 @@ import {
 import { DemoReel } from "@/components/demo-reel";
 import { Logo } from "@/components/logo";
 import { SiteFooter } from "@/components/site-footer";
-import { DESCRIPTION, GITHUB_URL, NAV, PRODUCT_NAME, WAITLIST_URL } from "@/lib/site";
+import { DESCRIPTION, GITHUB_URL, NAV, PRODUCT_NAME } from "@/lib/site";
 import s from "./page.module.css";
 
 const steps = [
@@ -161,12 +161,6 @@ export default function Home() {
           </div>
           <p className={s.note}>
             No sign-up. Your video never leaves your computer.
-            {WAITLIST_URL && (
-              <>
-                {" "}
-                <a href={WAITLIST_URL}>Get launch updates</a>
-              </>
-            )}
           </p>
 
           <DemoReel />
