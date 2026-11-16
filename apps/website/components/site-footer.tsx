@@ -1,5 +1,5 @@
 import { ArrowUp } from "lucide-react";
-import { GITHUB_URL, NAV, PRODUCT_NAME, TAGLINE, WAITLIST_URL, X_URL } from "@/lib/site";
+import { GITHUB_URL, NAV, PRODUCT_NAME, TAGLINE, X_URL } from "@/lib/site";
 import { Logo } from "./logo";
 import s from "./site-footer.module.css";
 
@@ -37,11 +37,6 @@ export function SiteFooter() {
               <li>
                 <a href={GITHUB_URL}>Source on GitHub</a>
               </li>
-              {WAITLIST_URL && (
-                <li>
-                  <a href={WAITLIST_URL}>Get launch updates</a>
-                </li>
-              )}
               <li>
                 <a href={X_URL}>Follow on X</a>
               </li>

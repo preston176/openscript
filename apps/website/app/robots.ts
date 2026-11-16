@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 
-// The editor zone (/app) has its own robots and sitemap; the waitlist thank-you page isn't worth indexing.
+// The editor zone (/app) has its own robots and sitemap.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/success"] },
+    rules: { userAgent: "*", allow: "/" },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

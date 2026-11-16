@@ -2,7 +2,7 @@
 
 > Status snapshot: 2026-05-31, branch `transcript-editor`. **Checkboxes updated 2026-11-15** after PRs #3 to #7 merged; see `todo.todo` for what's left. Derived from a full verified audit of the repo (build health, transcript feature, transcription pipeline, rebrand, desktop, infra). Each item below cites `file:line` evidence.
 
-OpenScript is a fork of OpenCut (browser video editor, Next.js + Rust/WASM) with a new **transcript-driven editing** layer — "edit video by editing the transcript." `apps/web` is the product; `apps/website` is a separate waitlist/marketing site; `apps/desktop` is a GPUI scaffold.
+OpenScript is a fork of OpenCut (browser video editor, Next.js + Rust/WASM) with a new **transcript-driven editing** layer — "edit video by editing the transcript." `apps/web` is the product; `apps/website` is a separate marketing site; `apps/desktop` is a GPUI scaffold.
 
 **Working today:** the OpenCut editor base is healthy (project create → editor mounts, WASM/WebGPU/preview/timeline render, no console errors), the transcript happy-path is wired end-to-end, and the transcript/transcription code is type-clean. The editor runs fully local with `bun install && bun run dev:web` (no Postgres/Redis needed).
 
@@ -67,7 +67,7 @@ Three confirmed correctness bugs in the new feature.
 
 - [x] **Landing page** in `apps/website`, in OpenScript's dark theme (black, zinc, `#0070f3`, Inter), structure ported from Offsite (`~/Code/personal/S3-bucket`): nav, hero, Screen Studio–style scripted demo (`components/demo-reel.tsx`: transcribe, remove fillers, cut a retake, export), how it works, features, privacy, FAQ with JSON-LD, footer, OG image, robots, sitemap. Builds with npm.
 - [x] **Analytics**: dropped (user call, 2026-11-15). Removed the Databuddy claims from the privacy page; nothing ever loaded it.
-- [ ] **Waitlist**: `NEXT_PUBLIC_TALLY_FORM_ID` unset, so the "Get launch updates" link is hidden. Set it in the website deploy.
+- [x] **Waitlist**: dropped (2026-11-16). The site sends people straight to the editor; the Tally link and `/success` page are gone.
 - [x] **Deploy both zones**: already wired. Vercel Git integration builds `openscript` (website, root domain `tryopenscript.vercel.app`) and `openscript-app` (editor) on every push; merging to `main` deploys production. Live `/app` proxy confirmed 2026-11-15.
 - [x] **Package manager**: moved to npm (2026-11-15). `package-lock.json` replaces `bun.lock`, `.npmrc` only sets `legacy-peer-deps`, tests run on vitest (`apps/web/test-wasm.ts` instantiates the real wasm), CI and the Dockerfile use Node 22 + `npm ci`, better-auth pinned to `~1.6.9`.
 
